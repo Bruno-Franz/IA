@@ -111,46 +111,31 @@ for i, params in enumerate(params_list, 1):
 import pandas as pd
 pd.DataFrame(results_dt)
 
-!pip install -q --upgrade datasets "pyarrow<20"  # versões compatíveis
-
-from datasets import load_dataset
-b2w = load_dataset("ruanchaves/b2w-reviews01", split="train[:10%]")
-print(b2w[0]["review_text"])
-
-from huggingface_hub import list_files_info, hf_hub_download
-
-# Entra no repositório e baixa os arquivos reais do LFS
-!git -C /content/b2w-reviews01 lfs pull
-
-import os
-data_path = "/content/b2w-reviews01/data"
-print("Conteúdo de", data_path, ":", os.listdir(data_path))
-
 """# Task
-eu tenho uma base aqui que eu preciso subir para cá e que você consiga fazer a leitura desses dados para fazer um pré-processamento dos dados para depois aplicar os métodos como de árvore de decisão e quem saber uma rede neural, como eu subo?
+Carrega o conjunto de resenhas de livros em português para classificar sentimentos.
 
 Here is all the data you need:
-"B2W-Reviews01.csv"
+"books_reviews.csv"
 
 ## Data loading
 
 ### Subtask:
-Load the dataset "B2W-Reviews01.csv" into a pandas DataFrame.
+Load the dataset "books_reviews.csv" into a pandas DataFrame.
 
 **Reasoning**:
-Load the dataset "B2W-Reviews01.csv" into a pandas DataFrame and display basic information about it.
+Carregar a base de resenhas já combinada em um único CSV local e exibir informações básicas.
 """
 
 import pandas as pd
 
 try:
-    df = pd.read_csv('B2W-Reviews01.csv')
+    df = pd.read_csv('books_reviews.csv')
 except UnicodeDecodeError:
     try:
-        df = pd.read_csv('B2W-Reviews01.csv', encoding='latin-1')
+        df = pd.read_csv('books_reviews.csv', encoding='latin-1')
     except UnicodeDecodeError:
         try:
-            df = pd.read_csv('B2W-Reviews01.csv', encoding='utf-8')
+            df = pd.read_csv('books_reviews.csv', encoding='utf-8')
         except Exception as e:
             print(f"Error loading the file: {e}")
             df = None
@@ -163,142 +148,28 @@ if df is not None:
 """## Data exploration
 
 ### Subtask:
-Explore the dataset to understand its structure, identify data types of each column, check for missing values, and examine the distribution of key variables. Determine the shape of the data and look for potential issues like inconsistencies or irrelevant columns.  Pay special attention to the 'review_comment_title' and 'review_comment_message' columns, as these might contain valuable textual information.
+Explorar rapidamente a base de resenhas, verificando quantidade de exemplos por classe e tamanho médio dos textos.
 
 **Reasoning**:
-Explore the dataset, identify data types, check for missing values, examine the distribution of key variables, and look for potential issues.  This involves using .shape, .info(), .describe(), examining unique values for categorical columns, calculating text lengths, and checking for duplicates.
+Como o conjunto possui apenas duas colunas (texto e rótulo), a análise pode ser simplificada para foco na distribuição das classes e nas estatísticas básicas das resenhas.
 """
 
-# Check the shape of the DataFrame
 print("Shape of the DataFrame:", df.shape)
+print(df['label'].value_counts())
 
-# Get a summary of the DataFrame
-df.info()
-
-# Descriptive statistics for numerical columns
-print("\nDescriptive Statistics:")
-display(df.describe())
-
-# Examine unique values for categorical columns
-categorical_cols = df.select_dtypes(include=['object']).columns
-for col in categorical_cols:
-    print(f"\nUnique values and frequencies for {col}:")
-    print(df[col].value_counts())
-
-# Calculate the average length of text in 'review_comment_title' and 'review_comment_message'
-# Note: These columns are 'review_title' and 'review_text' in the provided data.
-if 'review_title' in df.columns:
-    df['review_title_length'] = df['review_title'].astype(str).apply(len)
-    print(f"\nAverage length of review_title: {df['review_title_length'].mean()}")
-if 'review_text' in df.columns:
-    df['review_text_length'] = df['review_text'].astype(str).apply(len)
-    print(f"\nAverage length of review_text: {df['review_text_length'].mean()}")
-
-# Check for duplicated rows
-duplicated_rows = df.duplicated().sum()
-print(f"\nNumber of duplicated rows: {duplicated_rows}")
-
-"""**Reasoning**:
-Visualize the distribution of key variables using histograms, box plots, and count plots. Pay special attention to the `overall_rating` column. Check for potential outliers or unusual patterns in numerical and categorical features. Also, visualize the correlation matrix using a heatmap.
-
-
-"""
+# calcular o comprimento médio das resenhas
+df['text_length'] = df['review_text'].astype(str).apply(len)
+print("Tamanho médio do texto:", df['text_length'].mean())
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Overall rating distribution
-plt.figure(figsize=(8, 6))
-sns.countplot(x='overall_rating', data=df)
-plt.title('Distribution of Overall Ratings')
+plt.figure(figsize=(6,4))
+sns.countplot(x='label', data=df)
+plt.title('Distribuição das classes')
 plt.show()
 
-# Histograms for numerical features
-numerical_cols = df.select_dtypes(include=['number']).columns
-for col in numerical_cols:
-    plt.figure(figsize=(8, 6))
-    sns.histplot(df[col], kde=True)
-    plt.title(f'Distribution of {col}')
-    plt.show()
-
-
-# Box plots for numerical features
-for col in numerical_cols:
-    plt.figure(figsize=(8, 6))
-    sns.boxplot(x=col, data=df)
-    plt.title(f'Boxplot of {col}')
-    plt.show()
-
-# Count plots for categorical features (excluding text columns)
-categorical_cols = df.select_dtypes(include=['object']).columns
-for col in categorical_cols:
-    if col not in ['review_title', 'review_text']:  # Exclude text columns
-        plt.figure(figsize=(12, 6)) # Adjust figure size for better readability
-        sns.countplot(x=col, data=df)
-        plt.title(f'Distribution of {col}')
-        plt.xticks(rotation=45, ha='right') # Rotate x-axis labels for better readability
-        plt.tight_layout() # Adjust layout to prevent labels from overlapping
-        plt.show()
-
-# Correlation matrix and heatmap
-plt.figure(figsize=(12, 10))
-correlation_matrix = df.corr()
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-plt.title('Correlation Matrix of Numerical Features')
-plt.show()
-
-"""**Reasoning**:
-The previous code block failed due to a `ValueError` when trying to compute the correlation matrix because of a string column ('submission_date').  I need to handle this error by excluding non-numeric columns from the correlation calculation.  I'll also improve the plot sizes and add labels and titles to the plots.
-
-
-"""
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Overall rating distribution
-plt.figure(figsize=(10, 6))
-sns.countplot(x='overall_rating', data=df)
-plt.title('Distribution of Overall Ratings')
-plt.xlabel('Overall Rating')
-plt.ylabel('Count')
-plt.show()
-
-# Histograms for numerical features
-numerical_cols = df.select_dtypes(include=['number']).columns
-for col in numerical_cols:
-    plt.figure(figsize=(10, 6))
-    sns.histplot(df[col], kde=True)
-    plt.title(f'Distribution of {col}')
-    plt.xlabel(col)
-    plt.ylabel('Frequency')
-    plt.show()
-
-# Box plots for numerical features
-for col in numerical_cols:
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(x=col, data=df)
-    plt.title(f'Boxplot of {col}')
-    plt.xlabel(col)
-    plt.show()
-
-# Count plots for categorical features (excluding text columns)
-categorical_cols = df.select_dtypes(include=['object']).columns
-for col in categorical_cols:
-    if col not in ['review_title', 'review_text']:
-        plt.figure(figsize=(14, 8))
-        sns.countplot(x=col, data=df)
-        plt.title(f'Distribution of {col}')
-        plt.xlabel(col)
-        plt.ylabel('Count')
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
-        plt.show()
-
-# Correlation matrix and heatmap - handle non-numeric columns
-numeric_df = df.select_dtypes(include=['number'])
-correlation_matrix = numeric_df.corr()
-plt.figure(figsize=(12, 10))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-plt.title('Correlation Matrix of Numerical Features')
+plt.figure(figsize=(6,4))
+sns.histplot(df['text_length'], kde=True)
+plt.title('Distribuição do tamanho das resenhas')
 plt.show()

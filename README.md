@@ -18,15 +18,11 @@ Atributos por tipo
 Matriz de pixels RGB: cada imagem representa uma amostra; é recomendável redimensionar para um tamanho uniforme (p.ex. 224 × 224 px) e normalizar valores de cor antes de alimentar uma CNN.
 Rótulo: a espécie da flor, derivada diretamente da pasta que contém a imagem (cinco classes no total).
 
-3. Base Textual – B2W‑Reviews01 (Hugging Face)
-A base B2W‑Reviews01 disponibiliza 132 373 avaliações em português de produtos vendidos pela Americanas.com, coletadas entre janeiro e maio de 2018. O rótulo primário que empregaremos é recommend_to_a_friend (binário: Yes ou No), que indica se o consumidor recomendaria o item a terceiros.
+3. Base Textual – Books Reviews em Português (GitHub)
+O conjunto Books Reviews reúne 2 000 avaliações de livros publicadas por usuários da Amazon Brasil. Metade dos comentários está no arquivo `books_pt_neg` e foi classificada como negativa (abaixo de 3 estrelas); a outra metade encontra-se em `books_pt_pos` e corresponde a resenhas positivas (acima de 3 estrelas). O problema é identificar automaticamente se o texto expressa opinião favorável ou desfavorável.
 Atributos por tipo
-Texto livre principal: review_text, corpo da avaliação; precisa de tokenização e vetorização (TF‑IDF, embeddings ou similar).
-Textos curtos auxiliares: review_title, product_name, product_brand. Podem ser concatenados ao texto principal ou processados separadamente.
-Numéricos: overall_rating (nota de 1 a 5 estrelas) e reviewer_birth_year (ano de nascimento). A nota pode, opcionalmente, ser reagrupada em faixas de sentimento.
-Categóricos: site_category_lv1, site_category_lv2, reviewer_state, reviewer_gender. Requerem codificação (one‑hot ou embeddings categóricos).
-Campos de identificação ou data: submission_date, reviewer_id, product_id. Normalmente não entram no modelo, mas são úteis para filtragem ou ordenação.
-Rótulo: recommend_to_a_friend, binário (Yes/No). Se se desejar testar uma tarefa multiclasse, overall_ratingpode ser transformado em sentimento negativo (1‑2), neutro (3) e positivo (4‑5).
+Texto livre principal: cada linha de texto contém uma resenha completa, que precisa ser tokenizada e vetorizada (TF‑IDF ou embeddings) para alimentar os modelos.
+Rótulo: 0 para `books_pt_neg` e 1 para `books_pt_pos`. Como os arquivos não trazem metadados adicionais, o foco é exclusivamente na classificação textual.
 
 Adequação aos Requisitos
 Diversidade de formato: inclui dados tabulares, imagens e texto, cobrindo diferentes etapas de pré‑processamento e arquitetura de modelos.
@@ -36,5 +32,5 @@ Fontes públicas confiáveis: UCI Repository, Kaggle e Hugging Face, todos com
 
 https://archive.ics.uci.edu/dataset/222/bank%2Bmarketing?utm_source=chatgpt.com
 https://www.kaggle.com/datasets/alxmamaev/flowers-recognition?resource=download
-https://huggingface.co/datasets/ruanchaves/b2w-reviews01
+https://github.com/larifeliciana/books-reviews-portuguese
 
