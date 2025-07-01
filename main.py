@@ -106,7 +106,14 @@ def train_bank(X_train, X_test, y_train, y_test):
 
 # ---------------- Books Reviews Dataset -----------------
 
-def load_books_dataset(path: str = "archive/books_reviews.csv"):
+def load_books_dataset(path: str = "books_reviews.csv"):
+    """Load the Books Reviews dataset from ``path``.
+
+    The original script expected the CSV inside an ``archive`` folder,
+    but the repository already ships ``books_reviews.csv`` at the project
+    root. The default path was adjusted so ``run_all()`` works out of the
+    box without additional configuration.
+    """
     return pd.read_csv(path)
 
 

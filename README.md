@@ -1,6 +1,8 @@
 # IA
 Disciplina de Inteligência Artificial
 
+[Resultados dos experimentos](RESULTS.md)
+
 Bases de Dados Selecionadas
 Para cumprir o requisito de trabalhar com três formatos distintos (tabular, imagem e texto) e avaliar diferentes técnicas de classificação supervisionada, foram escolhidos conjuntos públicos de tamanho médio, rótulos bem definidos e licença aberta para uso acadêmico. 
 
