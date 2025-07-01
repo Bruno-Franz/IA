@@ -10,6 +10,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, accuracy_score
+from neural_models import (
+    train_mlp_keras,
+    train_cnn_text,
+    train_cnn_lstm_text,
+    train_gru_text,
+    train_cnn_deep,
+)
 import time
 
 # List to accumulate results for each training block
@@ -132,6 +139,22 @@ def train_bank_mlp(X_train, X_test, y_train, y_test):
         }
     )
 
+
+def train_bank_keras_mlp(X_train, X_test, y_train, y_test):
+    metrics = train_mlp_keras(X_train, X_test, y_train, y_test, epochs=50)
+    results_dt.append(
+        {
+            "dataset": "Bank Marketing",
+            "method": metrics["method"],
+            "hyperparameters": {"epochs": 50},
+            "accuracy": metrics["accuracy"],
+            "precision": None,
+            "recall": None,
+            "f1": None,
+            "duration": metrics["duration"],
+        }
+    )
+
 # ---------------- Books Reviews Dataset -----------------
 
 def load_books_dataset(path: str = "books_reviews.csv"):
@@ -161,6 +184,34 @@ def preprocess_books(df: pd.DataFrame):
     return X_train_vec, X_test_vec, y_train, y_test
 
 
+def preprocess_books_seq(df: pd.DataFrame, num_words: int = 10000,
+                         max_len: int = 200):
+    """Tokenize text reviews for neural models."""
+    df = df.dropna(subset=["review_text", "label"]).copy()
+    X = df["review_text"].astype(str)
+    y = df["label"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    tokenizer = keras.preprocessing.text.Tokenizer(num_words=num_words,
+                                                   oov_token="<OOV>")
+    tokenizer.fit_on_texts(X_train)
+    train_seq = tokenizer.texts_to_sequences(X_train)
+    test_seq = tokenizer.texts_to_sequences(X_test)
+
+    train_seq = keras.preprocessing.sequence.pad_sequences(
+        train_seq, maxlen=max_len, padding="post", truncating="post"
+    )
+    test_seq = keras.preprocessing.sequence.pad_sequences(
+        test_seq, maxlen=max_len, padding="post", truncating="post"
+    )
+
+    vocab_size = min(num_words, len(tokenizer.word_index) + 1)
+    return train_seq, test_seq, y_train, y_test, vocab_size
+
+
 def train_books(X_train, X_test, y_train, y_test):
     start = time.time()
     hyper = {"max_iter": 1000}
@@ -185,6 +236,38 @@ def train_books(X_train, X_test, y_train, y_test):
             "recall": report["weighted avg"]["recall"],
             "f1": report["weighted avg"]["f1-score"],
             "duration": elapsed,
+        }
+    )
+
+
+def train_books_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
+    metrics = train_cnn_text(train_seq, test_seq, y_train, y_test, vocab_size)
+    results_dt.append(
+        {
+            "dataset": "Books Reviews",
+            "method": metrics["method"],
+            "hyperparameters": {"vocab_size": vocab_size},
+            "accuracy": metrics["accuracy"],
+            "precision": None,
+            "recall": None,
+            "f1": None,
+            "duration": metrics["duration"],
+        }
+    )
+
+
+def train_books_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
+    metrics = train_cnn_lstm_text(train_seq, test_seq, y_train, y_test, vocab_size)
+    results_dt.append(
+        {
+            "dataset": "Books Reviews",
+            "method": metrics["method"],
+            "hyperparameters": {"vocab_size": vocab_size},
+            "accuracy": metrics["accuracy"],
+            "precision": None,
+            "recall": None,
+            "f1": None,
+            "duration": metrics["duration"],
         }
     )
 
@@ -276,6 +359,22 @@ def train_flowers(ds_train, ds_val, ds_test, num_classes):
     )
 
 
+def train_flowers_deep(ds_train, ds_val, ds_test, num_classes):
+    metrics = train_cnn_deep(ds_train, ds_val, ds_test, num_classes)
+    results_dt.append(
+        {
+            "dataset": "TF Flowers",
+            "method": metrics["method"],
+            "hyperparameters": {"epochs": 20},
+            "accuracy": metrics["accuracy"],
+            "precision": None,
+            "recall": None,
+            "f1": None,
+            "duration": metrics["duration"],
+        }
+    )
+
+
 # ---------------- Main Script -----------------
 
 def run_all():
@@ -287,11 +386,15 @@ def run_all():
         X_train, X_test, y_train, y_test = preprocess_bank(csv_file)
         train_bank(X_train, X_test, y_train, y_test)
         train_bank_mlp(X_train, X_test, y_train, y_test)
+        train_bank_keras_mlp(X_train, X_test, y_train, y_test)
 
     # Books Reviews
     books_df = load_books_dataset()
     X_train, X_test, y_train, y_test = preprocess_books(books_df)
     train_books(X_train, X_test, y_train, y_test)
+    train_seq, test_seq, y_train_seq, y_test_seq, vocab = preprocess_books_seq(books_df)
+    train_books_cnn(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
+    train_books_cnn_lstm(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
 
     # TF Flowers
     flowers = load_tf_flowers()
@@ -299,6 +402,7 @@ def run_all():
         (ds_train, ds_val, ds_test), info = flowers
         ds_train, ds_val, ds_test = preprocess_tf_flowers(ds_train, ds_val, ds_test)
         train_flowers(ds_train, ds_val, ds_test, info.features["label"].num_classes)
+        train_flowers_deep(ds_train, ds_val, ds_test, info.features["label"].num_classes)
 
     # Consolidate results and export to CSV
     df = pd.DataFrame(results_dt)
