@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from baseline_dt import run_all as run_dt_baseline
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, accuracy_score
@@ -300,6 +299,12 @@ def run_all():
         (ds_train, ds_val, ds_test), info = flowers
         ds_train, ds_val, ds_test = preprocess_tf_flowers(ds_train, ds_val, ds_test)
         train_flowers(ds_train, ds_val, ds_test, info.features["label"].num_classes)
+
+    # Consolidate results and export to CSV
+    df = pd.DataFrame(results_dt)
+    df.to_csv("results.csv", index=False)
+    return df
+
 
 if __name__ == "__main__":
     run_all()
