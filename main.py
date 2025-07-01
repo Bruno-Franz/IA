@@ -148,9 +148,9 @@ def train_bank_keras_mlp(X_train, X_test, y_train, y_test):
             "method": metrics["method"],
             "hyperparameters": {"epochs": 50},
             "accuracy": metrics["accuracy"],
-            "precision": None,
-            "recall": None,
-            "f1": None,
+            "precision": metrics.get("precision"),
+            "recall": metrics.get("recall"),
+            "f1": metrics.get("f1"),
             "duration": metrics["duration"],
         }
     )
@@ -248,9 +248,9 @@ def train_books_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
             "method": metrics["method"],
             "hyperparameters": {"vocab_size": vocab_size},
             "accuracy": metrics["accuracy"],
-            "precision": None,
-            "recall": None,
-            "f1": None,
+            "precision": metrics.get("precision"),
+            "recall": metrics.get("recall"),
+            "f1": metrics.get("f1"),
             "duration": metrics["duration"],
         }
     )
@@ -264,9 +264,9 @@ def train_books_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
             "method": metrics["method"],
             "hyperparameters": {"vocab_size": vocab_size},
             "accuracy": metrics["accuracy"],
-            "precision": None,
-            "recall": None,
-            "f1": None,
+            "precision": metrics.get("precision"),
+            "recall": metrics.get("recall"),
+            "f1": metrics.get("f1"),
             "duration": metrics["duration"],
         }
     )
@@ -367,9 +367,9 @@ def train_flowers_deep(ds_train, ds_val, ds_test, num_classes):
             "method": metrics["method"],
             "hyperparameters": {"epochs": 20},
             "accuracy": metrics["accuracy"],
-            "precision": None,
-            "recall": None,
-            "f1": None,
+            "precision": metrics.get("precision"),
+            "recall": metrics.get("recall"),
+            "f1": metrics.get("f1"),
             "duration": metrics["duration"],
         }
     )
