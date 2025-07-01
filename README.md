@@ -34,3 +34,49 @@ https://archive.ics.uci.edu/dataset/222/bank%2Bmarketing?utm_source=chatgpt.com
 https://www.kaggle.com/datasets/alxmamaev/flowers-recognition?resource=download
 https://github.com/larifeliciana/books-reviews-portuguese
 
+## Configuração do ambiente
+
+1. Use Python 3.10 ou superior. É recomendável criar um ambiente virtual:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   ```
+
+2. Instale as dependências principais:
+
+   ```bash
+   pip install pandas scikit-learn tensorflow tensorflow-datasets matplotlib seaborn
+   ```
+
+## Download dos conjuntos de dados
+
+- **Bank Marketing** – faça o download de `bank.zip` no site da UCI e extraia `bank-full.csv`:
+
+  ```bash
+  wget https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip
+  unzip bank.zip
+  ```
+
+- **Flowers Recognition** – o dataset é obtido automaticamente quando `tfds.load("tf_flowers")` é executado.
+- **Books Reviews** – o arquivo `books_reviews.csv` já acompanha este repositório (a versão original está em [books-reviews-portuguese](https://github.com/larifeliciana/books-reviews-portuguese)).
+
+## Execução do script
+
+Execute todo o fluxo de experimentos com:
+
+```bash
+python trabalhoia3.py
+```
+
+O script carrega as três bases, aplica os modelos e guarda as métricas na lista `results_dt`.
+
+Para gerar um CSV consolidado com essas métricas, execute após o término:
+
+```python
+import pandas as pd, trabalhoia3
+pd.DataFrame(trabalhoia3.results_dt).to_csv('resultados_consolidados.csv', index=False)
+```
+
+O arquivo `Análise do trabalho prático.pdf` apresenta a interpretação dos resultados obtidos. Recrie esse documento sempre que atualizar o CSV.
+
