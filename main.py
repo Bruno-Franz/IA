@@ -106,7 +106,7 @@ def train_bank(X_train, X_test, y_train, y_test):
 
 # ---------------- Books Reviews Dataset -----------------
 
-def load_books_dataset(path: str = "books_reviews.csv"):
+def load_books_dataset(path: str = "archive/books_reviews.csv"):
     return pd.read_csv(path)
 
 

@@ -118,12 +118,12 @@ pd.DataFrame(results_dt)
 Carrega o conjunto de resenhas de livros em português para classificar sentimentos.
 
 Here is all the data you need:
-"books_reviews.csv"
+"archive/books_reviews.csv"
 
 ## Data loading
 
 ### Subtask:
-Load the dataset "books_reviews.csv" into a pandas DataFrame.
+Load the dataset "archive/books_reviews.csv" into a pandas DataFrame.
 
 **Reasoning**:
 Carregar a base de resenhas já combinada em um único CSV local e exibir informações básicas.
@@ -132,13 +132,13 @@ Carregar a base de resenhas já combinada em um único CSV local e exibir inform
 import pandas as pd
 
 try:
-    df = pd.read_csv('books_reviews.csv')
+    df = pd.read_csv('archive/books_reviews.csv')
 except UnicodeDecodeError:
     try:
-        df = pd.read_csv('books_reviews.csv', encoding='latin-1')
+        df = pd.read_csv('archive/books_reviews.csv', encoding='latin-1')
     except UnicodeDecodeError:
         try:
-            df = pd.read_csv('books_reviews.csv', encoding='utf-8')
+            df = pd.read_csv('archive/books_reviews.csv', encoding='utf-8')
         except Exception as e:
             print(f"Error loading the file: {e}")
             df = None
@@ -260,7 +260,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # --- carregar ---
-df = pd.read_csv("books_reviews.csv")           # ajuste o caminho se necessário
+df = pd.read_csv("archive/books_reviews.csv")           # ajuste o caminho se necessário
 
 # --- checagem rápida ---
 print(df.shape)
@@ -293,7 +293,7 @@ import seaborn as sns
 import pandas as pd
 
 # ----- carregar e garantir text_length -----
-df = pd.read_csv("books_reviews.csv")
+df = pd.read_csv("archive/books_reviews.csv")
 if "text_length" not in df.columns:
     df["text_length"] = df["review_text"].str.len()
 
@@ -422,7 +422,7 @@ print(f"Acurácia no Teste: {accuracy_cnn_simple:.4f}")
 print(f"Tempo de treinamento: {time.time() - start_time:.2f} segundos")
 print("-" * 40)
 
-# Implementação da rede neural para dados de texto (books_reviews.csv)
+# Implementação da rede neural para dados de texto (archive/books_reviews.csv)
 
 import tensorflow as tf
 from tensorflow import keras
@@ -432,7 +432,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-# Certifique-se de que o DataFrame df do books_reviews.csv está disponível
+# Certifique-se de que o DataFrame df do archive/books_reviews.csv está disponível
 
 # Remover linhas com valores NaN na coluna 'review_text' ou 'label'
 df.dropna(subset=['review_text', 'label'], inplace=True)
