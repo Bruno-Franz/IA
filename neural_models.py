@@ -66,10 +66,17 @@ def train_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
                                                         restore_best_weights=True)],
               verbose=0)
 
-    loss, acc = model.evaluate(X_test, y_test, verbose=0)
+    loss, _ = model.evaluate(X_test, y_test, verbose=0)
+    probs = model.predict(X_test, verbose=0).ravel()
+    preds = (probs > 0.5).astype(int)
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_test, preds)
     return {
         "method": "Keras MLP",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
@@ -111,10 +118,21 @@ def train_cnn_simple(ds_train, ds_val, ds_test, num_classes: int,
     model.fit(_prep_image_ds(ds_train), validation_data=_prep_image_ds(ds_val),
               epochs=epochs, verbose=0)
 
-    loss, acc = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    loss, _ = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    y_true = []
+    y_pred = []
+    for batch, labels in ds_test:
+        preds = model.predict(batch, verbose=0)
+        y_pred.extend(preds.argmax(axis=1))
+        y_true.extend(labels.numpy())
+    report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_true, y_pred)
     return {
         "method": "Simple CNN",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
@@ -152,10 +170,21 @@ def train_cnn_deep(ds_train, ds_val, ds_test, num_classes: int,
         verbose=0,
     )
 
-    loss, acc = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    loss, _ = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    y_true = []
+    y_pred = []
+    for batch, labels in ds_test:
+        preds = model.predict(batch, verbose=0)
+        y_pred.extend(preds.argmax(axis=1))
+        y_true.extend(labels.numpy())
+    report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_true, y_pred)
     return {
         "method": "Deep CNN",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
@@ -186,10 +215,17 @@ def train_cnn_text(train_seq: np.ndarray, test_seq: np.ndarray,
 
     model.fit(train_seq, y_train, epochs=epochs, validation_split=0.2, verbose=0)
 
-    loss, acc = model.evaluate(test_seq, y_test, verbose=0)
+    loss, _ = model.evaluate(test_seq, y_test, verbose=0)
+    probs = model.predict(test_seq, verbose=0).ravel()
+    preds = (probs > 0.5).astype(int)
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_test, preds)
     return {
         "method": "CNN Text",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
@@ -222,10 +258,17 @@ def train_cnn_lstm_text(train_seq: np.ndarray, test_seq: np.ndarray,
                                                        restore_best_weights=True)],
               verbose=0)
 
-    loss, acc = model.evaluate(test_seq, y_test, verbose=0)
+    loss, _ = model.evaluate(test_seq, y_test, verbose=0)
+    probs = model.predict(test_seq, verbose=0).ravel()
+    preds = (probs > 0.5).astype(int)
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_test, preds)
     return {
         "method": "CNN+LSTM Text",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
@@ -256,10 +299,17 @@ def train_gru_text(train_seq: np.ndarray, test_seq: np.ndarray,
                                                        restore_best_weights=True)],
               verbose=0)
 
-    loss, acc = model.evaluate(test_seq, y_test, verbose=0)
+    loss, _ = model.evaluate(test_seq, y_test, verbose=0)
+    probs = model.predict(test_seq, verbose=0).ravel()
+    preds = (probs > 0.5).astype(int)
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_test, preds)
     return {
         "method": "GRU Text",
         "accuracy": acc,
+        "precision": report["weighted avg"]["precision"],
+        "recall": report["weighted avg"]["recall"],
+        "f1": report["weighted avg"]["f1-score"],
         "loss": loss,
         "duration": time.time() - start,
     }
