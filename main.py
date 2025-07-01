@@ -38,7 +38,9 @@ def download_bank_dataset():
         return csv_path
 
     try:
-        subprocess.run(["wget", "-q", url, "-O", str(zip_path)], check=True)
+        import urllib.request
+
+        urllib.request.urlretrieve(url, zip_path)
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extract("bank-full.csv")
     except Exception as exc:
