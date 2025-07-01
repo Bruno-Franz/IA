@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from baseline_dt import run_all as run_dt_baseline
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, accuracy_score
 import time
 
@@ -103,6 +104,34 @@ def train_bank(X_train, X_test, y_train, y_test):
         }
     )
 
+
+def train_bank_mlp(X_train, X_test, y_train, y_test):
+    """Train scikit-learn MLPClassifier on the bank dataset."""
+    start = time.time()
+    hyper = {"hidden_layer_sizes": (100,), "max_iter": 300, "random_state": 42}
+    clf = MLPClassifier(**hyper)
+    clf.fit(X_train, y_train)
+    preds = clf.predict(X_test)
+    elapsed = time.time() - start
+
+    print("Bank Marketing dataset results (MLP):")
+    print(classification_report(y_test, preds, zero_division=0))
+    acc = accuracy_score(y_test, preds)
+    print("Accuracy:", acc)
+
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    results_dt.append(
+        {
+            "dataset": "Bank Marketing",
+            "method": "MLPClassifier",
+            "hyperparameters": hyper,
+            "accuracy": acc,
+            "precision": report["weighted avg"]["precision"],
+            "recall": report["weighted avg"]["recall"],
+            "f1": report["weighted avg"]["f1-score"],
+            "duration": elapsed,
+        }
+    )
 
 # ---------------- Books Reviews Dataset -----------------
 
@@ -258,6 +287,7 @@ def run_all():
     if csv_file is not None:
         X_train, X_test, y_train, y_test = preprocess_bank(csv_file)
         train_bank(X_train, X_test, y_train, y_test)
+        train_bank_mlp(X_train, X_test, y_train, y_test)
 
     # Books Reviews
     books_df = load_books_dataset()
