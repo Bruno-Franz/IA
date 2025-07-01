@@ -10,6 +10,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, accuracy_score
+import time
+
+# List to accumulate results for each training block
+results = []
 
 # Optional imports for the image dataset
 try:
@@ -71,13 +75,31 @@ def preprocess_bank(csv_file: Path):
 
 
 def train_bank(X_train, X_test, y_train, y_test):
-    clf = DecisionTreeClassifier(random_state=42)
+    start = time.time()
+    hyper = {"random_state": 42}
+    clf = DecisionTreeClassifier(**hyper)
     clf.fit(X_train, y_train)
     preds = clf.predict(X_test)
+    elapsed = time.time() - start
 
     print("Bank Marketing dataset results:")
     print(classification_report(y_test, preds, zero_division=0))
-    print("Accuracy:", accuracy_score(y_test, preds))
+    acc = accuracy_score(y_test, preds)
+    print("Accuracy:", acc)
+
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    results.append(
+        {
+            "dataset": "Bank Marketing",
+            "method": "Decision Tree",
+            "hyperparameters": hyper,
+            "accuracy": acc,
+            "precision": report["weighted avg"]["precision"],
+            "recall": report["weighted avg"]["recall"],
+            "f1": report["weighted avg"]["f1-score"],
+            "duration": elapsed,
+        }
+    )
 
 
 # ---------------- Books Reviews Dataset -----------------
@@ -103,13 +125,31 @@ def preprocess_books(df: pd.DataFrame):
 
 
 def train_books(X_train, X_test, y_train, y_test):
-    clf = LogisticRegression(max_iter=1000)
+    start = time.time()
+    hyper = {"max_iter": 1000}
+    clf = LogisticRegression(**hyper)
     clf.fit(X_train, y_train)
     preds = clf.predict(X_test)
+    elapsed = time.time() - start
 
     print("Books Reviews dataset results:")
     print(classification_report(y_test, preds, zero_division=0))
-    print("Accuracy:", accuracy_score(y_test, preds))
+    acc = accuracy_score(y_test, preds)
+    print("Accuracy:", acc)
+
+    report = classification_report(y_test, preds, output_dict=True, zero_division=0)
+    results.append(
+        {
+            "dataset": "Books Reviews",
+            "method": "Logistic Regression",
+            "hyperparameters": hyper,
+            "accuracy": acc,
+            "precision": report["weighted avg"]["precision"],
+            "recall": report["weighted avg"]["recall"],
+            "f1": report["weighted avg"]["f1-score"],
+            "duration": elapsed,
+        }
+    )
 
 
 # ---------------- TF Flowers Dataset -----------------
@@ -149,6 +189,8 @@ def preprocess_tf_flowers(ds_train, ds_val, ds_test):
 
 
 def train_flowers(ds_train, ds_val, ds_test, num_classes):
+    start = time.time()
+    hyper = {"epochs": 3}
     model = keras.Sequential(
         [
             layers.Conv2D(32, 3, activation="relu", input_shape=(180, 180, 3)),
@@ -167,10 +209,34 @@ def train_flowers(ds_train, ds_val, ds_test, num_classes):
         metrics=["accuracy"],
     )
 
-    model.fit(ds_train, validation_data=ds_val, epochs=3)
-    loss, acc = model.evaluate(ds_test)
+    model.fit(ds_train, validation_data=ds_val, epochs=hyper["epochs"])
+    y_true = []
+    y_pred = []
+    for batch, labels in ds_test:
+        preds = model.predict(batch)
+        y_pred.extend(preds.argmax(axis=1))
+        y_true.extend(labels.numpy())
+    elapsed = time.time() - start
+
+    report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    acc = accuracy_score(y_true, y_pred)
+
     print("TF Flowers dataset results:")
+    print(classification_report(y_true, y_pred, zero_division=0))
     print("Accuracy:", acc)
+
+    results.append(
+        {
+            "dataset": "TF Flowers",
+            "method": "Simple CNN",
+            "hyperparameters": hyper,
+            "accuracy": acc,
+            "precision": report["weighted avg"]["precision"],
+            "recall": report["weighted avg"]["recall"],
+            "f1": report["weighted avg"]["f1-score"],
+            "duration": elapsed,
+        }
+    )
 
 
 # ---------------- Main Script -----------------
@@ -193,6 +259,10 @@ def main():
         (ds_train, ds_val, ds_test), info = flowers
         ds_train, ds_val, ds_test = preprocess_tf_flowers(ds_train, ds_val, ds_test)
         train_flowers(ds_train, ds_val, ds_test, info.features["label"].num_classes)
+
+    # Export consolidated results
+    if results:
+        pd.DataFrame(results).to_csv("results.csv", index=False)
 
 
 if __name__ == "__main__":
