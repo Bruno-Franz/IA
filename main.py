@@ -13,7 +13,7 @@ from sklearn.metrics import classification_report, accuracy_score
 import time
 
 # List to accumulate results for each training block
-results = []
+results_dt = []
 
 # Optional imports for the image dataset
 try:
@@ -88,7 +88,7 @@ def train_bank(X_train, X_test, y_train, y_test):
     print("Accuracy:", acc)
 
     report = classification_report(y_test, preds, output_dict=True, zero_division=0)
-    results.append(
+    results_dt.append(
         {
             "dataset": "Bank Marketing",
             "method": "Decision Tree",
@@ -138,7 +138,7 @@ def train_books(X_train, X_test, y_train, y_test):
     print("Accuracy:", acc)
 
     report = classification_report(y_test, preds, output_dict=True, zero_division=0)
-    results.append(
+    results_dt.append(
         {
             "dataset": "Books Reviews",
             "method": "Logistic Regression",
@@ -225,7 +225,7 @@ def train_flowers(ds_train, ds_val, ds_test, num_classes):
     print(classification_report(y_true, y_pred, zero_division=0))
     print("Accuracy:", acc)
 
-    results.append(
+    results_dt.append(
         {
             "dataset": "TF Flowers",
             "method": "Simple CNN",
@@ -241,7 +241,9 @@ def train_flowers(ds_train, ds_val, ds_test, num_classes):
 
 # ---------------- Main Script -----------------
 
-def main():
+def run_all():
+    global results_dt
+    results_dt = []
     # Bank Marketing
     csv_file = download_bank_dataset()
     if csv_file is not None:
@@ -260,10 +262,10 @@ def main():
         ds_train, ds_val, ds_test = preprocess_tf_flowers(ds_train, ds_val, ds_test)
         train_flowers(ds_train, ds_val, ds_test, info.features["label"].num_classes)
 
-    # Export consolidated results
-    if results:
-        pd.DataFrame(results).to_csv("results.csv", index=False)
+    # Export consolidated results_dt
+    if results_dt:
+        pd.DataFrame(results_dt).to_csv("results.csv", index=False)
 
 
 if __name__ == "__main__":
-    main()
+    run_all()
