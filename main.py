@@ -1,4 +1,3 @@
-import os
 import zipfile
 import subprocess
 from pathlib import Path
