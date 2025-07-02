@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from evaluation import aggregate_results
+from evaluation import agregar_resultados
 
 
 def test_aggregate_results_groups_and_averages(tmp_path):
@@ -38,7 +38,7 @@ def test_aggregate_results_groups_and_averages(tmp_path):
     csv_path = tmp_path / "res.csv"
     df.to_csv(csv_path, index=False)
 
-    results = aggregate_results(str(csv_path))
+    results = agregar_resultados(str(csv_path))
 
     assert set(results.keys()) == {"A", "B"}
     a_table = results["A"]

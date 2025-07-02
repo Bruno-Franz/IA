@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.datasets import make_classification
 
-from evaluation import evaluate_dataset
+from evaluation import avaliar_dataset
 
 
 def test_evaluate_dataset_returns_three_dicts_with_keys():
@@ -9,7 +9,7 @@ def test_evaluate_dataset_returns_three_dicts_with_keys():
     df = pd.DataFrame(X, columns=[f"f{i}" for i in range(X.shape[1])])
     df["label"] = y
 
-    results = evaluate_dataset(df, target="label")
+    results = avaliar_dataset(df, target="label")
 
     assert isinstance(results, list)
     assert len(results) == 3
