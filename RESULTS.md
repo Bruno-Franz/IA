@@ -1,31 +1,24 @@
 # Experimental Results
 
-The following tables summarize the outcomes captured in `results.csv`.
+The following tables compile the metrics aggregated from `results.csv`.
 
 ## Bank Marketing
 
-| method | hyperparameters | accuracy | precision | recall | f1 | duration |
-|--------|-----------------|---------:|----------:|-------:|----:|---------:|
-| Decision Tree | {'random_state': 42} | 0.874 | 0.877 | 0.874 | 0.875 | 0.379 |
-| MLPClassifier | {'hidden_layer_sizes': (100,), 'max_iter': 300, 'random_state': 42} | 0.896 | 0.889 | 0.896 | 0.892 | 15.358 |
+| method | accuracy | precision | recall | f1 | duration (s) |
+|-------|---------:|----------:|-------:|---:|-------------:|
+| Decision Tree | 0.874 | 0.877 | 0.874 | 0.875 | 0.379 |
+| MLPClassifier | 0.896 | 0.889 | 0.896 | 0.892 | 15.358 |
 
 ## Books Reviews
 
-| method | hyperparameters | accuracy | precision | recall | f1 | duration |
-|--------|-----------------|---------:|----------:|-------:|----:|---------:|
-| Logistic Regression | {'max_iter': 1000} | 0.875 | 0.875 | 0.875 | 0.875 | 0.016 |
+| method | accuracy | precision | recall | f1 | duration (s) |
+|-------------------|---------:|----------:|-------:|---:|-------------:|
+| Logistic Regression | 0.875 | 0.875 | 0.875 | 0.875 | 0.016 |
 
 ## Discussion
 
-On the **Bank Marketing** dataset, the MLP neural network outperformed the classical
-Decision Tree, achieving **0.896 accuracy** versus **0.874**. The trade‑off was
-a much longer runtime: around **15&nbsp;seconds** for the MLP compared with
-under **0.4&nbsp;seconds** for the Decision Tree.
+**Bank Marketing.** Among classical approaches, the Decision Tree reached an accuracy of about 0.874 in under half a second. The neural MLPClassifier attained the best score, roughly 0.896 accuracy, but required more than 15&nbsp;seconds of training. This demonstrates a clear trade‑off between accuracy and runtime: the neural model is superior but far slower.
 
-For the **Books Reviews** text data we only evaluated a classical model.
-The Logistic Regression classifier reached **0.875 accuracy** in roughly
-**0.016&nbsp;seconds** and no neural model results were recorded for comparison.
+**Books Reviews.** Only the Logistic Regression baseline was recorded for this text dataset. It achieved around 0.875 accuracy in just 0.016&nbsp;seconds. No neural architecture results were available for comparison.
 
-Overall, the neural approach gave the highest score on the tabular task but
-required significantly more time to train, whereas the classical method for
-sentiment analysis ran nearly instantly and already produced strong results.
+Overall, the experiments show that neural networks can deliver higher accuracy at the cost of significantly longer runtimes. When speed is crucial, the classical models may suffice, while neural methods become attractive if additional accuracy justifies the extra training time.
