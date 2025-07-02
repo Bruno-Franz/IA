@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from evaluation import aggregate_results
+from avaliacao import aggregate_results
 
 
 def test_aggregate_results_groups_and_averages(tmp_path):

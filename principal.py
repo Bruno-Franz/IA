@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, accuracy_score
-from neural_models import (
+from modelos_neurais import (
     train_mlp_keras,
     train_cnn_text,
     train_cnn_lstm_text,
