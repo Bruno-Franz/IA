@@ -83,5 +83,19 @@ import baseline_dt
 pd.DataFrame(baseline_dt.run_all()).to_csv('resultados_consolidados.csv', index=False)
 ```
 
-O arquivo `Análise do trabalho prático.pdf` apresenta a interpretação dos resultados obtidos. Recrie esse documento sempre que atualizar o CSV.
+## Gerar `results.csv` e tabelas resumo
+
+Execute `baseline_dt.py` para treinar os modelos de referência e salvar `results.csv`:
+
+```bash
+python baseline_dt.py
+```
+
+Em seguida produza tabelas agregadas em Markdown e CSV com `evaluation.py`:
+
+```bash
+python evaluation.py results.csv --out-dir tables
+```
+
+Veja a análise completa em [RESULTS.md](RESULTS.md) ou no [relatório em PDF](Análise%20do%20trabalho%20prático.pdf).
 
