@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import numpy as np
+import time
 from pathlib import Path
 from typing import List, Dict, Tuple
 
@@ -125,9 +126,11 @@ def evaluate_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
     )
     results = []
     for i, params in enumerate(PARAMS_LIST, 1):
+        start = time.time()
         clf = DecisionTreeClassifier(random_state=42, **params)
         clf.fit(X_train, y_train)
         preds = clf.predict(X_test)
+        duration = time.time() - start
         report = classification_report(y_test, preds, output_dict=True, zero_division=0)
         results.append(
             {
@@ -138,6 +141,7 @@ def evaluate_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
                 "Precision": report["weighted avg"]["precision"],
                 "Recall": report["weighted avg"]["recall"],
                 "F1": report["weighted avg"]["f1-score"],
+                "Duration": duration,
             }
         )
     return results
@@ -148,7 +152,10 @@ def evaluate_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
 results_dt: List[Dict[str, object]] = []
 
 
-def run_all() -> List[Dict[str, object]]:
+def run_all() -> pd.DataFrame:
+    global results_dt
+    results_dt = []
+
     # Bank
     bank_csv = load_bank_dataset()
     X_bank, y_bank = preprocess_bank(bank_csv)
@@ -166,10 +173,11 @@ def run_all() -> List[Dict[str, object]]:
     else:
         results_dt.extend(evaluate_dataset(X_flowers, y_flowers, "Flowers"))
 
-    return results_dt
+    df = pd.DataFrame(results_dt)
+    df.to_csv("results.csv", index=False)
+    return df
 
 
 if __name__ == "__main__":
-    run_all()
-    for r in results_dt:
-        print(r)
+    df = run_all()
+    print(df)
