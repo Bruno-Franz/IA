@@ -1,3 +1,4 @@
+"""Funções para avaliar e agregar resultados de modelos."""
 from __future__ import annotations
 
 from typing import List, Dict, Mapping
@@ -28,6 +29,7 @@ def avaliar_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
         List with one metrics dictionary per model. Each dictionary contains the
         keys ``method``, ``accuracy``, ``precision``, ``recall`` and ``f1``.
     """
+    # separa dados e treina modelos simples
     X = df.drop(columns=[target])
     y = df[target]
 
@@ -75,6 +77,7 @@ def agregar_resultados(csv_path: str) -> Mapping[str, pd.DataFrame]:
         A dictionary mapping each dataset name to a table with the aggregated
         metrics for every method tested.
     """
+    # agrupa métricas por dataset e método
     df = pd.read_csv(csv_path)
     metrics = ["accuracy", "precision", "recall", "f1", "duration"]
     grouped = df.groupby(["dataset", "method"])[metrics].mean().reset_index()
@@ -97,6 +100,7 @@ def gerar_tabelas(csv_path: str, out_dir: str = ".", prefix: str = "table") -> N
     prefix : str, optional
         Prefix used for the output filenames.
     """
+    # gera arquivos com tabelas sumarizadas
     tables = agregar_resultados(csv_path)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)

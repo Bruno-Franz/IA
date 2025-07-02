@@ -1,5 +1,4 @@
-# Neural network architectures extracted from archive/trabalhoia3.py
-# and refactored into reusable functions.
+"""Funções de redes neurais reutilizáveis para dados tabulares, texto e imagem."""
 
 from __future__ import annotations
 
@@ -19,6 +18,7 @@ import tensorflow as tf
 def treinar_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
                         y_train: Iterable, y_test: Iterable,
                         hidden_layer_sizes=(100,), max_iter=300) -> dict:
+    # treino de MLP usando scikit-learn
     """Train a scikit-learn MLPClassifier and return metrics."""
     start = time.time()
     clf = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes,
@@ -44,6 +44,7 @@ def treinar_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
                       y_train: Iterable, y_test: Iterable,
                       epochs: int = 50) -> dict:
     """Train a simple Keras MLP for binary classification."""
+    # rede simples em Keras
     start = time.time()
     model = keras.Sequential(
         [
@@ -88,6 +89,7 @@ IMG_SIZE = (180, 180)
 BATCH_SIZE = 32
 
 def _preparar_ds_imagem(ds):
+    # redimensiona e normaliza imagens
     def resize_norm(img, label):
         img = tf.image.resize(img, IMG_SIZE)
         img = img / 255.0
@@ -98,6 +100,7 @@ def _preparar_ds_imagem(ds):
 def treinar_cnn_simples(ds_train, ds_val, ds_test, num_classes: int,
                         epochs: int = 10) -> dict:
     """Train a small CNN for image classification."""
+    # CNN simples para imagens
     start = time.time()
     model = keras.Sequential(
         [
@@ -141,6 +144,7 @@ def treinar_cnn_simples(ds_train, ds_val, ds_test, num_classes: int,
 def treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes: int,
                          epochs: int = 20) -> dict:
     """Train a deeper CNN with additional layers."""
+    # versão mais profunda da CNN
     start = time.time()
     model = keras.Sequential(
         [
@@ -197,6 +201,7 @@ def treinar_cnn_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                       vocab_size: int, embedding_dim: int = 16,
                       epochs: int = 10) -> dict:
     """CNN model for text classification."""
+    # CNN para classificação de texto
     start = time.time()
     max_length = train_seq.shape[1]
     model = keras.Sequential(
@@ -236,6 +241,7 @@ def treinar_cnn_lstm_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                             vocab_size: int, embedding_dim: int = 32,
                             epochs: int = 10) -> dict:
     """CNN + LSTM model for text classification."""
+    # combinação de CNN e LSTM para texto
     start = time.time()
     max_length = train_seq.shape[1]
     model = keras.Sequential(
@@ -279,6 +285,7 @@ def treinar_gru_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                       vocab_size: int, embedding_dim: int = 32,
                       epochs: int = 10) -> dict:
     """GRU based model for text classification."""
+    # modelo baseado em GRU
     start = time.time()
     max_length = train_seq.shape[1]
     model = keras.Sequential(
