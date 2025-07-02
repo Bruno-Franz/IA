@@ -16,9 +16,9 @@ import tensorflow as tf
 
 # ---------------------- Tabular Data ----------------------
 
-def train_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
-                       y_train: Iterable, y_test: Iterable,
-                       hidden_layer_sizes=(100,), max_iter=300) -> dict:
+def treinar_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
+                        y_train: Iterable, y_test: Iterable,
+                        hidden_layer_sizes=(100,), max_iter=300) -> dict:
     """Train a scikit-learn MLPClassifier and return metrics."""
     start = time.time()
     clf = MLPClassifier(hidden_layer_sizes=hidden_layer_sizes,
@@ -40,9 +40,9 @@ def train_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
     }
 
 
-def train_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
-                    y_train: Iterable, y_test: Iterable,
-                    epochs: int = 50) -> dict:
+def treinar_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
+                      y_train: Iterable, y_test: Iterable,
+                      epochs: int = 50) -> dict:
     """Train a simple Keras MLP for binary classification."""
     start = time.time()
     model = keras.Sequential(
@@ -87,7 +87,7 @@ def train_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
 IMG_SIZE = (180, 180)
 BATCH_SIZE = 32
 
-def _prep_image_ds(ds):
+def _preparar_ds_imagem(ds):
     def resize_norm(img, label):
         img = tf.image.resize(img, IMG_SIZE)
         img = img / 255.0
@@ -95,8 +95,8 @@ def _prep_image_ds(ds):
     return ds.map(resize_norm).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
 
-def train_cnn_simple(ds_train, ds_val, ds_test, num_classes: int,
-                     epochs: int = 10) -> dict:
+def treinar_cnn_simples(ds_train, ds_val, ds_test, num_classes: int,
+                        epochs: int = 10) -> dict:
     """Train a small CNN for image classification."""
     start = time.time()
     model = keras.Sequential(
@@ -115,10 +115,10 @@ def train_cnn_simple(ds_train, ds_val, ds_test, num_classes: int,
                   loss="sparse_categorical_crossentropy",
                   metrics=["accuracy"])
 
-    model.fit(_prep_image_ds(ds_train), validation_data=_prep_image_ds(ds_val),
+    model.fit(_preparar_ds_imagem(ds_train), validation_data=_preparar_ds_imagem(ds_val),
               epochs=epochs, verbose=0)
 
-    loss, _ = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    loss, _ = model.evaluate(_preparar_ds_imagem(ds_test), verbose=0)
     y_true = []
     y_pred = []
     for batch, labels in ds_test:
@@ -138,8 +138,8 @@ def train_cnn_simple(ds_train, ds_val, ds_test, num_classes: int,
     }
 
 
-def train_cnn_deep(ds_train, ds_val, ds_test, num_classes: int,
-                    epochs: int = 20) -> dict:
+def treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes: int,
+                         epochs: int = 20) -> dict:
     """Train a deeper CNN with additional layers."""
     start = time.time()
     model = keras.Sequential(
@@ -162,15 +162,15 @@ def train_cnn_deep(ds_train, ds_val, ds_test, num_classes: int,
                   metrics=["accuracy"])
 
     model.fit(
-        _prep_image_ds(ds_train),
-        validation_data=_prep_image_ds(ds_val),
+        _preparar_ds_imagem(ds_train),
+        validation_data=_preparar_ds_imagem(ds_val),
         epochs=epochs,
         callbacks=[keras.callbacks.EarlyStopping(monitor='val_loss', patience=5,
                                                  restore_best_weights=True)],
         verbose=0,
     )
 
-    loss, _ = model.evaluate(_prep_image_ds(ds_test), verbose=0)
+    loss, _ = model.evaluate(_preparar_ds_imagem(ds_test), verbose=0)
     y_true = []
     y_pred = []
     for batch, labels in ds_test:
@@ -192,10 +192,10 @@ def train_cnn_deep(ds_train, ds_val, ds_test, num_classes: int,
 
 # ---------------------- Text Data ----------------------
 
-def train_cnn_text(train_seq: np.ndarray, test_seq: np.ndarray,
-                   y_train: Iterable, y_test: Iterable,
-                   vocab_size: int, embedding_dim: int = 16,
-                   epochs: int = 10) -> dict:
+def treinar_cnn_texto(train_seq: np.ndarray, test_seq: np.ndarray,
+                      y_train: Iterable, y_test: Iterable,
+                      vocab_size: int, embedding_dim: int = 16,
+                      epochs: int = 10) -> dict:
     """CNN model for text classification."""
     start = time.time()
     max_length = train_seq.shape[1]
@@ -231,10 +231,10 @@ def train_cnn_text(train_seq: np.ndarray, test_seq: np.ndarray,
     }
 
 
-def train_cnn_lstm_text(train_seq: np.ndarray, test_seq: np.ndarray,
-                         y_train: Iterable, y_test: Iterable,
-                         vocab_size: int, embedding_dim: int = 32,
-                         epochs: int = 10) -> dict:
+def treinar_cnn_lstm_texto(train_seq: np.ndarray, test_seq: np.ndarray,
+                            y_train: Iterable, y_test: Iterable,
+                            vocab_size: int, embedding_dim: int = 32,
+                            epochs: int = 10) -> dict:
     """CNN + LSTM model for text classification."""
     start = time.time()
     max_length = train_seq.shape[1]
@@ -274,10 +274,10 @@ def train_cnn_lstm_text(train_seq: np.ndarray, test_seq: np.ndarray,
     }
 
 
-def train_gru_text(train_seq: np.ndarray, test_seq: np.ndarray,
-                   y_train: Iterable, y_test: Iterable,
-                   vocab_size: int, embedding_dim: int = 32,
-                   epochs: int = 10) -> dict:
+def treinar_gru_texto(train_seq: np.ndarray, test_seq: np.ndarray,
+                      y_train: Iterable, y_test: Iterable,
+                      vocab_size: int, embedding_dim: int = 32,
+                      epochs: int = 10) -> dict:
     """GRU based model for text classification."""
     start = time.time()
     max_length = train_seq.shape[1]

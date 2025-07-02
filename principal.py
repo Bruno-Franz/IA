@@ -11,11 +11,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, accuracy_score
 from modelos_neurais import (
-    train_mlp_keras,
-    train_cnn_text,
-    train_cnn_lstm_text,
-    train_gru_text,
-    train_cnn_deep,
+    treinar_mlp_keras,
+    treinar_cnn_texto,
+    treinar_cnn_lstm_texto,
+    treinar_gru_texto,
+    treinar_cnn_profundo,
 )
 import time
 
@@ -35,8 +35,8 @@ except Exception:
 
 # ---------------- Bank Marketing Dataset -----------------
 
-def download_bank_dataset():
-    """Download and extract the bank marketing dataset if not present."""
+def baixar_base_banco():
+    """Baixar e extrair o dataset de marketing bancário se necessário."""
     url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip"
     zip_path = Path("bank.zip")
     csv_path = Path("bank-full.csv")
@@ -56,7 +56,7 @@ def download_bank_dataset():
     return csv_path
 
 
-def preprocess_bank(csv_file: Path):
+def preprocessar_banco(csv_file: Path):
     df = pd.read_csv(csv_file, sep=";")
     df = df.copy()
 
@@ -83,7 +83,7 @@ def preprocess_bank(csv_file: Path):
     return train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 
-def train_bank(X_train, X_test, y_train, y_test):
+def treinar_banco(X_train, X_test, y_train, y_test):
     start = time.time()
     hyper = {"random_state": 42}
     clf = DecisionTreeClassifier(**hyper)
@@ -111,7 +111,7 @@ def train_bank(X_train, X_test, y_train, y_test):
     )
 
 
-def train_bank_mlp(X_train, X_test, y_train, y_test):
+def treinar_banco_mlp(X_train, X_test, y_train, y_test):
     """Train scikit-learn MLPClassifier on the bank dataset."""
     start = time.time()
     hyper = {"hidden_layer_sizes": (100,), "max_iter": 300, "random_state": 42}
@@ -140,8 +140,8 @@ def train_bank_mlp(X_train, X_test, y_train, y_test):
     )
 
 
-def train_bank_keras_mlp(X_train, X_test, y_train, y_test):
-    metrics = train_mlp_keras(X_train, X_test, y_train, y_test, epochs=50)
+def treinar_banco_keras_mlp(X_train, X_test, y_train, y_test):
+    metrics = treinar_mlp_keras(X_train, X_test, y_train, y_test, epochs=50)
     results_dt.append(
         {
             "dataset": "Bank Marketing",
@@ -157,18 +157,18 @@ def train_bank_keras_mlp(X_train, X_test, y_train, y_test):
 
 # ---------------- Books Reviews Dataset -----------------
 
-def load_books_dataset(path: str = "books_reviews.csv"):
+def carregar_base_livros(path: str = "books_reviews.csv"):
     """Load the Books Reviews dataset from ``path``.
 
     The original script expected the CSV inside an ``archive`` folder,
     but the repository already ships ``books_reviews.csv`` at the project
-    root. The default path was adjusted so ``run_all()`` works out of the
+    root. The default path was adjusted so ``executar_tudo()`` works out of the
     box without additional configuration.
     """
     return pd.read_csv(path)
 
 
-def preprocess_books(df: pd.DataFrame):
+def preprocessar_livros(df: pd.DataFrame):
     df = df.dropna(subset=["review_text", "label"]).copy()
     X = df["review_text"].astype(str)
     y = df["label"]
@@ -184,8 +184,8 @@ def preprocess_books(df: pd.DataFrame):
     return X_train_vec, X_test_vec, y_train, y_test
 
 
-def preprocess_books_seq(df: pd.DataFrame, num_words: int = 10000,
-                         max_len: int = 200):
+def preprocessar_livros_seq(df: pd.DataFrame, num_words: int = 10000,
+                            max_len: int = 200):
     """Tokenize text reviews for neural models."""
     df = df.dropna(subset=["review_text", "label"]).copy()
     X = df["review_text"].astype(str)
@@ -212,7 +212,7 @@ def preprocess_books_seq(df: pd.DataFrame, num_words: int = 10000,
     return train_seq, test_seq, y_train, y_test, vocab_size
 
 
-def train_books(X_train, X_test, y_train, y_test):
+def treinar_livros(X_train, X_test, y_train, y_test):
     start = time.time()
     hyper = {"max_iter": 1000}
     clf = LogisticRegression(**hyper)
@@ -240,8 +240,8 @@ def train_books(X_train, X_test, y_train, y_test):
     )
 
 
-def train_books_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
-    metrics = train_cnn_text(train_seq, test_seq, y_train, y_test, vocab_size)
+def treinar_livros_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
+    metrics = treinar_cnn_texto(train_seq, test_seq, y_train, y_test, vocab_size)
     results_dt.append(
         {
             "dataset": "Books Reviews",
@@ -256,8 +256,8 @@ def train_books_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
     )
 
 
-def train_books_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
-    metrics = train_cnn_lstm_text(train_seq, test_seq, y_train, y_test, vocab_size)
+def treinar_livros_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
+    metrics = treinar_cnn_lstm_texto(train_seq, test_seq, y_train, y_test, vocab_size)
     results_dt.append(
         {
             "dataset": "Books Reviews",
@@ -274,7 +274,7 @@ def train_books_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
 
 # ---------------- TF Flowers Dataset -----------------
 
-def load_tf_flowers():
+def carregar_tf_flores():
     if tfds is None:
         print("TensorFlow datasets is not available.")
         return None
@@ -290,7 +290,7 @@ def load_tf_flowers():
         return None
 
 
-def preprocess_tf_flowers(ds_train, ds_val, ds_test):
+def preprocessar_tf_flores(ds_train, ds_val, ds_test):
     IMG_SIZE = (180, 180)
     BATCH_SIZE = 32
 
@@ -308,7 +308,7 @@ def preprocess_tf_flowers(ds_train, ds_val, ds_test):
     return ds_train, ds_val, ds_test
 
 
-def train_flowers(ds_train, ds_val, ds_test, num_classes):
+def treinar_flores(ds_train, ds_val, ds_test, num_classes):
     start = time.time()
     hyper = {"epochs": 3}
     model = keras.Sequential(
@@ -359,8 +359,8 @@ def train_flowers(ds_train, ds_val, ds_test, num_classes):
     )
 
 
-def train_flowers_deep(ds_train, ds_val, ds_test, num_classes):
-    metrics = train_cnn_deep(ds_train, ds_val, ds_test, num_classes)
+def treinar_flores_profundo(ds_train, ds_val, ds_test, num_classes):
+    metrics = treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes)
     results_dt.append(
         {
             "dataset": "TF Flowers",
@@ -377,32 +377,32 @@ def train_flowers_deep(ds_train, ds_val, ds_test, num_classes):
 
 # ---------------- Main Script -----------------
 
-def run_all():
+def executar_tudo():
     global results_dt
     results_dt = []
     # Bank Marketing
-    csv_file = download_bank_dataset()
+    csv_file = baixar_base_banco()
     if csv_file is not None:
-        X_train, X_test, y_train, y_test = preprocess_bank(csv_file)
-        train_bank(X_train, X_test, y_train, y_test)
-        train_bank_mlp(X_train, X_test, y_train, y_test)
-        train_bank_keras_mlp(X_train, X_test, y_train, y_test)
+        X_train, X_test, y_train, y_test = preprocessar_banco(csv_file)
+        treinar_banco(X_train, X_test, y_train, y_test)
+        treinar_banco_mlp(X_train, X_test, y_train, y_test)
+        treinar_banco_keras_mlp(X_train, X_test, y_train, y_test)
 
     # Books Reviews
-    books_df = load_books_dataset()
-    X_train, X_test, y_train, y_test = preprocess_books(books_df)
-    train_books(X_train, X_test, y_train, y_test)
-    train_seq, test_seq, y_train_seq, y_test_seq, vocab = preprocess_books_seq(books_df)
-    train_books_cnn(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
-    train_books_cnn_lstm(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
+    books_df = carregar_base_livros()
+    X_train, X_test, y_train, y_test = preprocessar_livros(books_df)
+    treinar_livros(X_train, X_test, y_train, y_test)
+    train_seq, test_seq, y_train_seq, y_test_seq, vocab = preprocessar_livros_seq(books_df)
+    treinar_livros_cnn(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
+    treinar_livros_cnn_lstm(train_seq, test_seq, y_train_seq, y_test_seq, vocab)
 
     # TF Flowers
-    flowers = load_tf_flowers()
+    flowers = carregar_tf_flores()
     if flowers is not None and tf is not None:
         (ds_train, ds_val, ds_test), info = flowers
-        ds_train, ds_val, ds_test = preprocess_tf_flowers(ds_train, ds_val, ds_test)
-        train_flowers(ds_train, ds_val, ds_test, info.features["label"].num_classes)
-        train_flowers_deep(ds_train, ds_val, ds_test, info.features["label"].num_classes)
+        ds_train, ds_val, ds_test = preprocessar_tf_flores(ds_train, ds_val, ds_test)
+        treinar_flores(ds_train, ds_val, ds_test, info.features["label"].num_classes)
+        treinar_flores_profundo(ds_train, ds_val, ds_test, info.features["label"].num_classes)
 
     # Consolidate results and export to CSV
     df = pd.DataFrame(results_dt)
@@ -411,4 +411,4 @@ def run_all():
 
 
 if __name__ == "__main__":
-    run_all()
+    executar_tudo()
