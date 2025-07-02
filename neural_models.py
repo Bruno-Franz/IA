@@ -314,3 +314,17 @@ def treinar_gru_texto(train_seq: np.ndarray, test_seq: np.ndarray,
         "duration": time.time() - start,
     }
 
+# ---------------------------------------------------------------------------
+# Compatibilidade retroativa
+# ---------------------------------------------------------------------------
+
+# Aliases para os nomes de funções antigos em inglês
+train_mlp_sklearn = treinar_mlp_sklearn
+train_mlp_keras = treinar_mlp_keras
+_prep_image_ds = _preparar_ds_imagem
+train_cnn_simple = treinar_cnn_simples
+train_cnn_deep = treinar_cnn_profunda
+train_cnn_text = treinar_cnn_texto
+train_cnn_lstm_text = treinar_cnn_lstm_texto
+train_gru_text = treinar_gru_texto
+

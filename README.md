@@ -83,6 +83,10 @@ import baseline_dt
 pd.DataFrame(baseline_dt.rodar_tudo()).to_csv('resultados_consolidados.csv', index=False)
 ```
 
+Os métodos originais em inglês continuam disponíveis como aliases para
+compatibilidade. Por exemplo, `baseline_dt.run_all()` chama a mesma função que
+`baseline_dt.rodar_tudo()`.
+
 ## Gerar `results.csv` e tabelas resumo
 
 Execute `baseline_dt.py` para treinar os modelos de referência e salvar `results.csv`:

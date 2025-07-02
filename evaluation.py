@@ -122,3 +122,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     gerar_tabelas(args.csv, out_dir=args.out_dir, prefix=args.prefix)
+
+# ---------------------------------------------------------------------------
+# Compatibilidade retroativa
+# ---------------------------------------------------------------------------
+
+# Mantém nomes antigos para evitar quebras em código externo
+evaluate_dataset = avaliar_dataset
+aggregate_results = agregar_resultados
+generate_tables = gerar_tabelas

@@ -181,3 +181,15 @@ def rodar_tudo() -> pd.DataFrame:
 if __name__ == "__main__":
     df = rodar_tudo()
     print(df)
+
+# ---------------------------------------------------------------------------
+# Compatibilidade retroativa
+# ---------------------------------------------------------------------------
+
+# Mantém nomes de funções anteriores para quem depende desta API.
+load_bank_dataset = carregar_base_banco
+preprocess_bank = preprocessar_banco
+preprocess_books = preprocessar_livros
+preprocess_flowers = preprocessar_flores
+evaluate_dataset = avaliar_dataset
+run_all = rodar_tudo
