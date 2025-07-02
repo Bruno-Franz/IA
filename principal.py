@@ -1,3 +1,4 @@
+"""Script principal que executa treinamentos nos três conjuntos de dados."""
 import zipfile
 import subprocess
 from pathlib import Path
@@ -57,6 +58,7 @@ def baixar_base_banco():
 
 
 def preprocessar_banco(csv_file: Path):
+    # prepara o dataset bancário
     df = pd.read_csv(csv_file, sep=";")
     df = df.copy()
 
@@ -84,6 +86,7 @@ def preprocessar_banco(csv_file: Path):
 
 
 def treinar_banco(X_train, X_test, y_train, y_test):
+    # árvore de decisão no dataset bancário
     start = time.time()
     hyper = {"random_state": 42}
     clf = DecisionTreeClassifier(**hyper)
@@ -113,6 +116,7 @@ def treinar_banco(X_train, X_test, y_train, y_test):
 
 def treinar_banco_mlp(X_train, X_test, y_train, y_test):
     """Train scikit-learn MLPClassifier on the bank dataset."""
+    # MLP do scikit-learn
     start = time.time()
     hyper = {"hidden_layer_sizes": (100,), "max_iter": 300, "random_state": 42}
     clf = MLPClassifier(**hyper)
@@ -141,6 +145,7 @@ def treinar_banco_mlp(X_train, X_test, y_train, y_test):
 
 
 def treinar_banco_keras_mlp(X_train, X_test, y_train, y_test):
+    # MLP implementado em Keras
     metrics = treinar_mlp_keras(X_train, X_test, y_train, y_test, epochs=50)
     results_dt.append(
         {
@@ -165,10 +170,12 @@ def carregar_base_livros(path: str = "books_reviews.csv"):
     root. The default path was adjusted so ``executar_tudo()`` works out of the
     box without additional configuration.
     """
+    # carrega o CSV de resenhas
     return pd.read_csv(path)
 
 
 def preprocessar_livros(df: pd.DataFrame):
+    # gera representações TF-IDF
     df = df.dropna(subset=["review_text", "label"]).copy()
     X = df["review_text"].astype(str)
     y = df["label"]
@@ -187,6 +194,7 @@ def preprocessar_livros(df: pd.DataFrame):
 def preprocessar_livros_seq(df: pd.DataFrame, num_words: int = 10000,
                             max_len: int = 200):
     """Tokenize text reviews for neural models."""
+    # produz sequências de tokens
     df = df.dropna(subset=["review_text", "label"]).copy()
     X = df["review_text"].astype(str)
     y = df["label"]
@@ -213,6 +221,7 @@ def preprocessar_livros_seq(df: pd.DataFrame, num_words: int = 10000,
 
 
 def treinar_livros(X_train, X_test, y_train, y_test):
+    # regressão logística nas resenhas
     start = time.time()
     hyper = {"max_iter": 1000}
     clf = LogisticRegression(**hyper)
@@ -241,6 +250,7 @@ def treinar_livros(X_train, X_test, y_train, y_test):
 
 
 def treinar_livros_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
+    # CNN simples para texto
     metrics = treinar_cnn_texto(train_seq, test_seq, y_train, y_test, vocab_size)
     results_dt.append(
         {
@@ -257,6 +267,7 @@ def treinar_livros_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
 
 
 def treinar_livros_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
+    # CNN combinada com LSTM
     metrics = treinar_cnn_lstm_texto(train_seq, test_seq, y_train, y_test, vocab_size)
     results_dt.append(
         {
@@ -275,6 +286,7 @@ def treinar_livros_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
 # ---------------- TF Flowers Dataset -----------------
 
 def carregar_tf_flores():
+    # carrega dataset de flores do TensorFlow
     if tfds is None:
         print("TensorFlow datasets is not available.")
         return None
@@ -291,6 +303,7 @@ def carregar_tf_flores():
 
 
 def preprocessar_tf_flores(ds_train, ds_val, ds_test):
+    # normaliza e redimensiona imagens
     IMG_SIZE = (180, 180)
     BATCH_SIZE = 32
 
@@ -309,6 +322,7 @@ def preprocessar_tf_flores(ds_train, ds_val, ds_test):
 
 
 def treinar_flores(ds_train, ds_val, ds_test, num_classes):
+    # CNN simples para o dataset de flores
     start = time.time()
     hyper = {"epochs": 3}
     model = keras.Sequential(
@@ -360,6 +374,7 @@ def treinar_flores(ds_train, ds_val, ds_test, num_classes):
 
 
 def treinar_flores_profundo(ds_train, ds_val, ds_test, num_classes):
+    # versão mais profunda da CNN
     metrics = treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes)
     results_dt.append(
         {
@@ -378,6 +393,7 @@ def treinar_flores_profundo(ds_train, ds_val, ds_test, num_classes):
 # ---------------- Main Script -----------------
 
 def executar_tudo():
+    # orquestra todos os experimentos
     global results_dt
     results_dt = []
     # Bank Marketing

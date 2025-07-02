@@ -1,5 +1,4 @@
-# Baseline Decision Tree classifiers for Bank, Flowers, and Books datasets
-# Implements simple preprocessing and evaluation for each dataset
+"""Baseline de Árvores de Decisão para os conjuntos Bank, Books e Flowers."""
 
 from __future__ import annotations
 
@@ -45,6 +44,7 @@ def baixar_base_banco() -> Path:
 
 
 def preprocessar_banco(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
+    # carrega o CSV e normaliza colunas
     df = pd.read_csv(csv_file, sep=";")
     binary_map = {"yes": 1, "no": 0}
     for col in ["default", "housing", "loan", "y"]:
@@ -67,6 +67,7 @@ BOOKS_PATH = Path("books_reviews.csv")
 
 
 def preprocessar_livros() -> Tuple[pd.DataFrame, pd.Series]:
+    # prepara as resenhas de livros
     df = pd.read_csv(BOOKS_PATH)
     df = df.dropna(subset=["review_text", "label"]).copy()
     y = df["label"]
@@ -80,6 +81,7 @@ def preprocessar_livros() -> Tuple[pd.DataFrame, pd.Series]:
 
 
 def preprocessar_flores() -> Tuple[pd.DataFrame, pd.Series]:
+    # carrega o dataset de flores e extrai histogramas
     if tfds is None:
         raise RuntimeError("TensorFlow Datasets not available")
 
@@ -121,6 +123,7 @@ PARAMS_LIST = [
 
 
 def avaliar_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
+    # separa dados, treina árvore e avalia
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
@@ -153,6 +156,7 @@ results_dt: List[Dict[str, object]] = []
 
 
 def executar_tudo() -> pd.DataFrame:
+    # executa o pipeline completo
     global results_dt
     results_dt = []
 

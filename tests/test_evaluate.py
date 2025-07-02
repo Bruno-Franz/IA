@@ -1,3 +1,4 @@
+"""Testes para a função de avaliação de modelos."""
 import pandas as pd
 from sklearn.datasets import make_classification
 

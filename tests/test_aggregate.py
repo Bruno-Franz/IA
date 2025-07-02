@@ -1,3 +1,4 @@
+"""Testes para a função de agregação de resultados."""
 import pandas as pd
 import pytest
 
