@@ -28,8 +28,8 @@ except Exception:  # TensorFlow might not be installed
 BANK_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip"
 
 
-def load_bank_dataset() -> Path:
-    """Download bank dataset if necessary and return CSV path."""
+def baixar_base_banco() -> Path:
+    """Baixar o dataset bancário se necessário e retornar o caminho do CSV."""
     csv_path = Path("bank-full.csv")
     if csv_path.exists():
         return csv_path
@@ -44,7 +44,7 @@ def load_bank_dataset() -> Path:
     return csv_path
 
 
-def preprocess_bank(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
+def preprocessar_banco(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
     df = pd.read_csv(csv_file, sep=";")
     binary_map = {"yes": 1, "no": 0}
     for col in ["default", "housing", "loan", "y"]:
@@ -66,7 +66,7 @@ def preprocess_bank(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
 BOOKS_PATH = Path("books_reviews.csv")
 
 
-def preprocess_books() -> Tuple[pd.DataFrame, pd.Series]:
+def preprocessar_livros() -> Tuple[pd.DataFrame, pd.Series]:
     df = pd.read_csv(BOOKS_PATH)
     df = df.dropna(subset=["review_text", "label"]).copy()
     y = df["label"]
@@ -79,7 +79,7 @@ def preprocess_books() -> Tuple[pd.DataFrame, pd.Series]:
 # --------------------- Flowers Recognition ---------------------
 
 
-def preprocess_flowers() -> Tuple[pd.DataFrame, pd.Series]:
+def preprocessar_flores() -> Tuple[pd.DataFrame, pd.Series]:
     if tfds is None:
         raise RuntimeError("TensorFlow Datasets not available")
 
@@ -120,7 +120,7 @@ PARAMS_LIST = [
 ]
 
 
-def evaluate_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
+def avaliar_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
@@ -152,26 +152,26 @@ def evaluate_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
 results_dt: List[Dict[str, object]] = []
 
 
-def run_all() -> pd.DataFrame:
+def executar_tudo() -> pd.DataFrame:
     global results_dt
     results_dt = []
 
     # Bank
-    bank_csv = load_bank_dataset()
-    X_bank, y_bank = preprocess_bank(bank_csv)
-    results_dt.extend(evaluate_dataset(X_bank, y_bank, "Bank"))
+    bank_csv = baixar_base_banco()
+    X_bank, y_bank = preprocessar_banco(bank_csv)
+    results_dt.extend(avaliar_dataset(X_bank, y_bank, "Bank"))
 
     # Books
-    X_books, y_books = preprocess_books()
-    results_dt.extend(evaluate_dataset(X_books, y_books, "Books"))
+    X_books, y_books = preprocessar_livros()
+    results_dt.extend(avaliar_dataset(X_books, y_books, "Books"))
 
     # Flowers
     try:
-        X_flowers, y_flowers = preprocess_flowers()
+        X_flowers, y_flowers = preprocessar_flores()
     except Exception as exc:
         print(f"Skipping flowers dataset due to error: {exc}")
     else:
-        results_dt.extend(evaluate_dataset(X_flowers, y_flowers, "Flowers"))
+        results_dt.extend(avaliar_dataset(X_flowers, y_flowers, "Flowers"))
 
     df = pd.DataFrame(results_dt)
     df.to_csv("results.csv", index=False)
@@ -179,5 +179,5 @@ def run_all() -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    df = run_all()
+    df = executar_tudo()
     print(df)

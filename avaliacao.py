@@ -12,7 +12,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 
-def evaluate_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
+def avaliar_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
     """Train simple models on *df* and return metrics.
 
     Parameters
@@ -61,7 +61,7 @@ def evaluate_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
     return results
 
 
-def aggregate_results(csv_path: str) -> Mapping[str, pd.DataFrame]:
+def agregar_resultados(csv_path: str) -> Mapping[str, pd.DataFrame]:
     """Group ``results.csv`` by dataset and method and average metrics.
 
     Parameters
@@ -85,7 +85,7 @@ def aggregate_results(csv_path: str) -> Mapping[str, pd.DataFrame]:
     return result
 
 
-def generate_tables(csv_path: str, out_dir: str = ".", prefix: str = "table") -> None:
+def gerar_tabelas(csv_path: str, out_dir: str = ".", prefix: str = "table") -> None:
     """Create per-dataset tables in CSV and Markdown format.
 
     Parameters
@@ -97,7 +97,7 @@ def generate_tables(csv_path: str, out_dir: str = ".", prefix: str = "table") ->
     prefix : str, optional
         Prefix used for the output filenames.
     """
-    tables = aggregate_results(csv_path)
+    tables = agregar_resultados(csv_path)
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -121,4 +121,4 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", default="table")
     args = parser.parse_args()
 
-    generate_tables(args.csv, out_dir=args.out_dir, prefix=args.prefix)
+    gerar_tabelas(args.csv, out_dir=args.out_dir, prefix=args.prefix)
