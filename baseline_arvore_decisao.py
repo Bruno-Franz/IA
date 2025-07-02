@@ -1,12 +1,16 @@
+# %%
 """Baseline de Árvores de Decisão para os conjuntos Bank, Books e Flowers."""
 
+# %%
 from __future__ import annotations
 
+# %%
 import numpy as np
 import time
 from pathlib import Path
 from typing import List, Dict, Tuple
 
+# %%
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
@@ -14,6 +18,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+# %%
 try:
     import tensorflow as tf
     import tensorflow_datasets as tfds
@@ -22,11 +27,14 @@ except Exception:  # TensorFlow might not be installed
     tfds = None
 
 
+# %% [markdown]
 # --------------------- Bank Marketing ---------------------
 
+# %%
 BANK_URL = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip"
 
 
+# %%
 def baixar_base_banco() -> Path:
     """Baixar o dataset bancário se necessário e retornar o caminho do CSV."""
     csv_path = Path("bank-full.csv")
@@ -43,6 +51,7 @@ def baixar_base_banco() -> Path:
     return csv_path
 
 
+# %%
 def preprocessar_banco(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
     # carrega o CSV e normaliza colunas
     df = pd.read_csv(csv_file, sep=";")
@@ -61,11 +70,14 @@ def preprocessar_banco(csv_file: Path) -> Tuple[pd.DataFrame, pd.Series]:
     return X_scaled, y
 
 
+# %% [markdown]
 # --------------------- Books Reviews ---------------------
 
+# %%
 BOOKS_PATH = Path("books_reviews.csv")
 
 
+# %%
 def preprocessar_livros() -> Tuple[pd.DataFrame, pd.Series]:
     # prepara as resenhas de livros
     df = pd.read_csv(BOOKS_PATH)
@@ -77,9 +89,11 @@ def preprocessar_livros() -> Tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
+# %% [markdown]
 # --------------------- Flowers Recognition ---------------------
 
 
+# %%
 def preprocessar_flores() -> Tuple[pd.DataFrame, pd.Series]:
     # carrega o dataset de flores e extrai histogramas
     if tfds is None:
@@ -113,8 +127,10 @@ def preprocessar_flores() -> Tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
+# %% [markdown]
 # --------------------- Evaluation ---------------------
 
+# %%
 PARAMS_LIST = [
     {"criterion": "gini", "max_depth": None},
     {"criterion": "entropy", "max_depth": 5},
@@ -122,6 +138,7 @@ PARAMS_LIST = [
 ]
 
 
+# %%
 def avaliar_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
     # separa dados, treina árvore e avalia
     X_train, X_test, y_train, y_test = train_test_split(
@@ -150,11 +167,14 @@ def avaliar_dataset(X, y, dataset_name: str) -> List[Dict[str, object]]:
     return results
 
 
+# %% [markdown]
 # --------------------- Main ---------------------
 
+# %%
 results_dt: List[Dict[str, object]] = []
 
 
+# %%
 def executar_tudo() -> pd.DataFrame:
     # executa o pipeline completo
     global results_dt
@@ -182,6 +202,7 @@ def executar_tudo() -> pd.DataFrame:
     return df
 
 
+# %%
 if __name__ == "__main__":
     df = executar_tudo()
     print(df)

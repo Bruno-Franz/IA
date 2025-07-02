@@ -1,10 +1,14 @@
+# %%
 """Funções de redes neurais reutilizáveis para dados tabulares, texto e imagem."""
 
+# %%
 from __future__ import annotations
 
+# %%
 import time
 from typing import Tuple, Iterable
 
+# %%
 import numpy as np
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.neural_network import MLPClassifier
@@ -13,8 +17,10 @@ from tensorflow.keras import layers
 import tensorflow as tf
 
 
+# %% [markdown]
 # ---------------------- Tabular Data ----------------------
 
+# %%
 def treinar_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
                         y_train: Iterable, y_test: Iterable,
                         hidden_layer_sizes=(100,), max_iter=300) -> dict:
@@ -40,6 +46,7 @@ def treinar_mlp_sklearn(X_train: np.ndarray, X_test: np.ndarray,
     }
 
 
+# %%
 def treinar_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
                       y_train: Iterable, y_test: Iterable,
                       epochs: int = 50) -> dict:
@@ -83,11 +90,14 @@ def treinar_mlp_keras(X_train: np.ndarray, X_test: np.ndarray,
     }
 
 
+# %% [markdown]
 # ---------------------- Image Data ----------------------
 
+# %%
 IMG_SIZE = (180, 180)
 BATCH_SIZE = 32
 
+# %%
 def _preparar_ds_imagem(ds):
     # redimensiona e normaliza imagens
     def resize_norm(img, label):
@@ -97,6 +107,7 @@ def _preparar_ds_imagem(ds):
     return ds.map(resize_norm).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
 
 
+# %%
 def treinar_cnn_simples(ds_train, ds_val, ds_test, num_classes: int,
                         epochs: int = 10) -> dict:
     """Train a small CNN for image classification."""
@@ -141,6 +152,7 @@ def treinar_cnn_simples(ds_train, ds_val, ds_test, num_classes: int,
     }
 
 
+# %%
 def treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes: int,
                          epochs: int = 20) -> dict:
     """Train a deeper CNN with additional layers."""
@@ -194,8 +206,10 @@ def treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes: int,
     }
 
 
+# %% [markdown]
 # ---------------------- Text Data ----------------------
 
+# %%
 def treinar_cnn_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                       y_train: Iterable, y_test: Iterable,
                       vocab_size: int, embedding_dim: int = 16,
@@ -236,6 +250,7 @@ def treinar_cnn_texto(train_seq: np.ndarray, test_seq: np.ndarray,
     }
 
 
+# %%
 def treinar_cnn_lstm_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                             y_train: Iterable, y_test: Iterable,
                             vocab_size: int, embedding_dim: int = 32,
@@ -280,6 +295,7 @@ def treinar_cnn_lstm_texto(train_seq: np.ndarray, test_seq: np.ndarray,
     }
 
 
+# %%
 def treinar_gru_texto(train_seq: np.ndarray, test_seq: np.ndarray,
                       y_train: Iterable, y_test: Iterable,
                       vocab_size: int, embedding_dim: int = 32,

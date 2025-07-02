@@ -1,10 +1,13 @@
+# %%
 """Testes para a função de agregação de resultados."""
 import pandas as pd
 import pytest
 
+# %%
 from avaliacao import agregar_resultados
 
 
+# %%
 def test_agregar_resultados_grupos_e_medias(tmp_path):
     data = [
         {
