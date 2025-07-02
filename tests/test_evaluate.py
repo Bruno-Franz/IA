@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.datasets import make_classification
 
-from evaluation import evaluate_dataset
+from avaliacao import evaluate_dataset
 
 
 def test_evaluate_dataset_returns_three_dicts_with_keys():

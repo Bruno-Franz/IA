@@ -69,32 +69,32 @@ https://github.com/larifeliciana/books-reviews-portuguese
 Execute todo o fluxo de experimentos com:
 
 ```bash
-python main.py
+python principal.py
 ```
 
-O script carrega as três bases, aplica os modelos principais e em seguida executa os baselines de árvore de decisão definidos em `baseline_dt.py`. Todas as métricas são exibidas no terminal.
+O script carrega as três bases, aplica os modelos principais e em seguida executa os baselines de árvore de decisão definidos em `baseline_arvore_decisao.py`. Todas as métricas são exibidas no terminal.
 
-Para gerar um CSV consolidado com essas métricas, utilize o módulo `baseline_dt` diretamente:
+Para gerar um CSV consolidado com essas métricas, utilize o módulo `baseline_arvore_decisao` diretamente:
 
 ```python
 import pandas as pd
-import baseline_dt
+import baseline_arvore_decisao
 
-pd.DataFrame(baseline_dt.run_all()).to_csv('resultados_consolidados.csv', index=False)
+pd.DataFrame(baseline_arvore_decisao.run_all()).to_csv('resultados_consolidados.csv', index=False)
 ```
 
 ## Gerar `results.csv` e tabelas resumo
 
-Execute `baseline_dt.py` para treinar os modelos de referência e salvar `results.csv`:
+Execute `baseline_arvore_decisao.py` para treinar os modelos de referência e salvar `results.csv`:
 
 ```bash
-python baseline_dt.py
+python baseline_arvore_decisao.py
 ```
 
-Em seguida produza tabelas agregadas em Markdown e CSV com `evaluation.py`:
+Em seguida produza tabelas agregadas em Markdown e CSV com `avaliacao.py`:
 
 ```bash
-python evaluation.py results.csv --out-dir tables
+python avaliacao.py results.csv --out-dir tables
 ```
 
 Veja a análise completa em [RESULTS.md](RESULTS.md) ou no [relatório em PDF](Análise%20do%20trabalho%20prático.pdf).
