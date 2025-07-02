@@ -80,7 +80,7 @@ Para gerar um CSV consolidado com essas métricas, utilize o módulo `baseline_a
 import pandas as pd
 import baseline_arvore_decisao
 
-pd.DataFrame(baseline_arvore_decisao.run_all()).to_csv('resultados_consolidados.csv', index=False)
+pd.DataFrame(baseline_arvore_decisao.executar_tudo()).to_csv('resultados_consolidados.csv', index=False)
 ```
 
 ## Gerar `results.csv` e tabelas resumo
