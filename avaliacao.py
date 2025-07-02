@@ -1,10 +1,14 @@
+# %%
 """Funções para avaliar e agregar resultados de modelos."""
 from __future__ import annotations
 
+# %%
 from typing import List, Dict, Mapping
 
+# %%
 from pathlib import Path
 
+# %%
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -13,6 +17,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 
 
+# %%
 def avaliar_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
     """Train simple models on *df* and return metrics.
 
@@ -63,6 +68,7 @@ def avaliar_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
     return results
 
 
+# %%
 def agregar_resultados(csv_path: str) -> Mapping[str, pd.DataFrame]:
     """Group ``results.csv`` by dataset and method and average metrics.
 
@@ -88,6 +94,7 @@ def agregar_resultados(csv_path: str) -> Mapping[str, pd.DataFrame]:
     return result
 
 
+# %%
 def gerar_tabelas(csv_path: str, out_dir: str = ".", prefix: str = "table") -> None:
     """Create per-dataset tables in CSV and Markdown format.
 
@@ -116,6 +123,7 @@ def gerar_tabelas(csv_path: str, out_dir: str = ".", prefix: str = "table") -> N
             fh.write(markdown)
 
 
+# %%
 if __name__ == "__main__":
     import argparse
 

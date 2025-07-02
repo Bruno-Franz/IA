@@ -1,1 +1,2 @@
+# %%
 """Pacote de testes automatizados."""

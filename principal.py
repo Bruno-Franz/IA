@@ -1,8 +1,10 @@
+# %%
 """Script principal que executa treinamentos nos três conjuntos de dados."""
 import zipfile
 import subprocess
 from pathlib import Path
 
+# %%
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -20,9 +22,11 @@ from modelos_neurais import (
 )
 import time
 
+# %%
 # List to accumulate results for each training block
 results_dt = []
 
+# %%
 # Optional imports for the image dataset
 try:
     import tensorflow as tf
@@ -34,8 +38,10 @@ except Exception:
     tfds = None
 
 
+# %% [markdown]
 # ---------------- Bank Marketing Dataset -----------------
 
+# %%
 def baixar_base_banco():
     """Baixar e extrair o dataset de marketing bancário se necessário."""
     url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip"
@@ -57,6 +63,7 @@ def baixar_base_banco():
     return csv_path
 
 
+# %%
 def preprocessar_banco(csv_file: Path):
     # prepara o dataset bancário
     df = pd.read_csv(csv_file, sep=";")
@@ -85,6 +92,7 @@ def preprocessar_banco(csv_file: Path):
     return train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 
+# %%
 def treinar_banco(X_train, X_test, y_train, y_test):
     # árvore de decisão no dataset bancário
     start = time.time()
@@ -114,6 +122,7 @@ def treinar_banco(X_train, X_test, y_train, y_test):
     )
 
 
+# %%
 def treinar_banco_mlp(X_train, X_test, y_train, y_test):
     """Train scikit-learn MLPClassifier on the bank dataset."""
     # MLP do scikit-learn
@@ -144,6 +153,7 @@ def treinar_banco_mlp(X_train, X_test, y_train, y_test):
     )
 
 
+# %%
 def treinar_banco_keras_mlp(X_train, X_test, y_train, y_test):
     # MLP implementado em Keras
     metrics = treinar_mlp_keras(X_train, X_test, y_train, y_test, epochs=50)
@@ -160,8 +170,10 @@ def treinar_banco_keras_mlp(X_train, X_test, y_train, y_test):
         }
     )
 
+# %% [markdown]
 # ---------------- Books Reviews Dataset -----------------
 
+# %%
 def carregar_base_livros(path: str = "books_reviews.csv"):
     """Load the Books Reviews dataset from ``path``.
 
@@ -174,6 +186,7 @@ def carregar_base_livros(path: str = "books_reviews.csv"):
     return pd.read_csv(path)
 
 
+# %%
 def preprocessar_livros(df: pd.DataFrame):
     # gera representações TF-IDF
     df = df.dropna(subset=["review_text", "label"]).copy()
@@ -191,6 +204,7 @@ def preprocessar_livros(df: pd.DataFrame):
     return X_train_vec, X_test_vec, y_train, y_test
 
 
+# %%
 def preprocessar_livros_seq(df: pd.DataFrame, num_words: int = 10000,
                             max_len: int = 200):
     """Tokenize text reviews for neural models."""
@@ -220,6 +234,7 @@ def preprocessar_livros_seq(df: pd.DataFrame, num_words: int = 10000,
     return train_seq, test_seq, y_train, y_test, vocab_size
 
 
+# %%
 def treinar_livros(X_train, X_test, y_train, y_test):
     # regressão logística nas resenhas
     start = time.time()
@@ -249,6 +264,7 @@ def treinar_livros(X_train, X_test, y_train, y_test):
     )
 
 
+# %%
 def treinar_livros_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
     # CNN simples para texto
     metrics = treinar_cnn_texto(train_seq, test_seq, y_train, y_test, vocab_size)
@@ -266,6 +282,7 @@ def treinar_livros_cnn(train_seq, test_seq, y_train, y_test, vocab_size):
     )
 
 
+# %%
 def treinar_livros_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
     # CNN combinada com LSTM
     metrics = treinar_cnn_lstm_texto(train_seq, test_seq, y_train, y_test, vocab_size)
@@ -283,8 +300,10 @@ def treinar_livros_cnn_lstm(train_seq, test_seq, y_train, y_test, vocab_size):
     )
 
 
+# %% [markdown]
 # ---------------- TF Flowers Dataset -----------------
 
+# %%
 def carregar_tf_flores():
     # carrega dataset de flores do TensorFlow
     if tfds is None:
@@ -302,6 +321,7 @@ def carregar_tf_flores():
         return None
 
 
+# %%
 def preprocessar_tf_flores(ds_train, ds_val, ds_test):
     # normaliza e redimensiona imagens
     IMG_SIZE = (180, 180)
@@ -321,6 +341,7 @@ def preprocessar_tf_flores(ds_train, ds_val, ds_test):
     return ds_train, ds_val, ds_test
 
 
+# %%
 def treinar_flores(ds_train, ds_val, ds_test, num_classes):
     # CNN simples para o dataset de flores
     start = time.time()
@@ -373,6 +394,7 @@ def treinar_flores(ds_train, ds_val, ds_test, num_classes):
     )
 
 
+# %%
 def treinar_flores_profundo(ds_train, ds_val, ds_test, num_classes):
     # versão mais profunda da CNN
     metrics = treinar_cnn_profundo(ds_train, ds_val, ds_test, num_classes)
@@ -390,8 +412,10 @@ def treinar_flores_profundo(ds_train, ds_val, ds_test, num_classes):
     )
 
 
+# %% [markdown]
 # ---------------- Main Script -----------------
 
+# %%
 def executar_tudo():
     # orquestra todos os experimentos
     global results_dt
@@ -426,5 +450,6 @@ def executar_tudo():
     return df
 
 
+# %%
 if __name__ == "__main__":
     executar_tudo()
