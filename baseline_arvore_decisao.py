@@ -1,8 +1,17 @@
 # %%
-"""Baseline de Árvores de Decisão para os conjuntos Bank, Books e Flowers."""
+from __future__ import annotations
+try:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    import sys, pathlib
+    project_root = pathlib.Path('/content/drive/MyDrive/IA')
+    sys.path.append(str(project_root))
+except ModuleNotFoundError:
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path().resolve()))
 
 # %%
-from __future__ import annotations
+"""Baseline de Árvores de Decisão para os conjuntos Bank, Books e Flowers."""
 
 # %%
 import numpy as np

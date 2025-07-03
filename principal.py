@@ -1,4 +1,15 @@
 # %%
+try:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    import sys, pathlib
+    project_root = pathlib.Path('/content/drive/MyDrive/IA')
+    sys.path.append(str(project_root))
+except ModuleNotFoundError:
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path().resolve()))
+
+# %%
 """Script principal que executa treinamentos nos três conjuntos de dados."""
 import zipfile
 import subprocess

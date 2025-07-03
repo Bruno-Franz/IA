@@ -99,3 +99,21 @@ python avaliacao.py results.csv --out-dir tables
 
 Veja a análise completa em [RESULTS.md](RESULTS.md) ou no [relatório em PDF](Análise%20do%20trabalho%20prático.pdf).
 
+## Usando os notebooks a partir do Google Drive
+
+Se preferir abrir os notebooks no Google Colab mantendo-os em uma pasta do Google Drive, coloque este repositório em `MyDrive/IA` (ou ajuste o caminho no primeiro código). O primeiro bloco de cada notebook agora tenta montar o Drive e adicionar essa pasta ao `sys.path`:
+
+```python
+try:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    import sys, pathlib
+    project_root = pathlib.Path('/content/drive/MyDrive/IA')
+    sys.path.append(str(project_root))
+except ModuleNotFoundError:
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path().resolve()))
+```
+
+Caso execute localmente fora do Colab, a célula apenas usa o diretório atual para localizar os módulos do projeto.
+

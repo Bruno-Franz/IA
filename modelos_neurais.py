@@ -1,8 +1,17 @@
 # %%
-"""Funções de redes neurais reutilizáveis para dados tabulares, texto e imagem."""
+from __future__ import annotations
+try:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    import sys, pathlib
+    project_root = pathlib.Path('/content/drive/MyDrive/IA')
+    sys.path.append(str(project_root))
+except ModuleNotFoundError:
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path().resolve()))
 
 # %%
-from __future__ import annotations
+"""Funções de redes neurais reutilizáveis para dados tabulares, texto e imagem."""
 
 # %%
 import time
