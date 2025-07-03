@@ -64,17 +64,13 @@ https://github.com/larifeliciana/books-reviews-portuguese
 - **Books Reviews** – o arquivo `books_reviews.csv` já acompanha este repositório (a versão original está em [books-reviews-portuguese](https://github.com/larifeliciana/books-reviews-portuguese)).
 
 
-## Execução do script
+## Execução dos notebooks
 
-Execute todo o fluxo de experimentos com:
+Abra o notebook `principal.ipynb` em seu ambiente Jupyter (local ou no Google Colab) e execute todas as células para reproduzir os experimentos completos. Há também notebooks auxiliares, como `baseline_arvore_decisao.ipynb` e `modelos_neurais.ipynb`, que podem ser executados individualmente.
 
-```bash
-python principal.py
-```
+Os arquivos `.py` correspondentes permanecem no repositório apenas como referência histórica.
 
-O script carrega as três bases, aplica os modelos principais e em seguida executa os baselines de árvore de decisão definidos em `baseline_arvore_decisao.py`. Todas as métricas são exibidas no terminal.
-
-Para gerar um CSV consolidado com essas métricas, utilize o módulo `baseline_arvore_decisao` diretamente:
+Para gerar um CSV consolidado com as métricas do baseline a partir de código Python, utilize o módulo `baseline_arvore_decisao` diretamente:
 
 ```python
 import pandas as pd
@@ -85,11 +81,7 @@ pd.DataFrame(baseline_arvore_decisao.executar_tudo()).to_csv('resultados_consoli
 
 ## Gerar `results.csv` e tabelas resumo
 
-Execute `baseline_arvore_decisao.py` para treinar os modelos de referência e salvar `results.csv`:
-
-```bash
-python baseline_arvore_decisao.py
-```
+Abra o notebook `baseline_arvore_decisao.ipynb` para treinar os modelos de referência e salvar `results.csv`. (O script `baseline_arvore_decisao.py` está disponível apenas como legado.)
 
 Em seguida produza tabelas agregadas em Markdown e CSV com `avaliacao.py`:
 
