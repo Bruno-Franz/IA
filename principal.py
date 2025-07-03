@@ -1,4 +1,15 @@
 # %%
+try:
+    from google.colab import drive
+    drive.mount('/content/drive')
+    import sys, pathlib
+    project_root = pathlib.Path('/content/drive/MyDrive/IA')
+    sys.path.append(str(project_root))
+except ModuleNotFoundError:
+    import sys, pathlib
+    sys.path.append(str(pathlib.Path().resolve()))
+
+# %%
 """Script principal que executa treinamentos nos três conjuntos de dados."""
 import zipfile
 import subprocess
@@ -19,13 +30,26 @@ from sklearn.metrics import (
     accuracy_score,
     precision_recall_fscore_support,
 )
-from modelos_neurais import (
-    treinar_mlp_keras,
-    treinar_cnn_texto,
-    treinar_cnn_lstm_texto,
-    treinar_gru_texto,
-    treinar_cnn_profundo,
-)
+import types
+import nbformat
+from nbconvert import PythonExporter
+
+
+def _load_neural_models(nb_path: str = "modelos_neurais.ipynb"):
+    """Load neural network helper functions from the notebook."""
+    nb = nbformat.read(nb_path, as_version=4)
+    code, _ = PythonExporter().from_notebook_node(nb)
+    module = types.ModuleType("modelos_neurais_nb")
+    exec(code, module.__dict__)
+    return module
+
+
+_modelos = _load_neural_models()
+treinar_mlp_keras = _modelos.treinar_mlp_keras
+treinar_cnn_texto = _modelos.treinar_cnn_texto
+treinar_cnn_lstm_texto = _modelos.treinar_cnn_lstm_texto
+treinar_gru_texto = _modelos.treinar_gru_texto
+treinar_cnn_profundo = _modelos.treinar_cnn_profundo
 import time
 
 # %%
