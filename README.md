@@ -74,6 +74,11 @@ python principal.py
 
 O script carrega as três bases, aplica os modelos principais e em seguida executa os baselines de árvore de decisão definidos em `baseline_arvore_decisao.py`. Todas as métricas são exibidas no terminal.
 
+As funções de redes neurais são importadas diretamente do notebook
+`modelos_neurais.ipynb`. O caminho do notebook é resolvido em relação ao próprio
+`principal.py`, permitindo rodar o script a partir de outros diretórios (como o
+Google Colab) desde que o repositório esteja no `sys.path`.
+
 Para gerar um CSV consolidado com essas métricas, utilize o módulo `baseline_arvore_decisao` diretamente:
 
 ```python

@@ -36,8 +36,22 @@ from nbconvert import PythonExporter
 
 
 def _load_neural_models(nb_path: str = "modelos_neurais.ipynb"):
-    """Load neural network helper functions from the notebook."""
-    nb = nbformat.read(nb_path, as_version=4)
+    """Load neural network helper functions from ``modelos_neurais.ipynb``.
+
+    The notebook path is resolved relative to this file when it cannot be found
+    in the current working directory. This allows the script to be executed from
+    outside the repository folder (for instance from Google Colab).
+    """
+
+    path = Path(nb_path)
+    if not path.exists():
+        try:
+            base = Path(__file__).resolve().parent
+            path = base / nb_path
+        except NameError:
+            path = Path.cwd() / nb_path
+
+    nb = nbformat.read(str(path), as_version=4)
     code, _ = PythonExporter().from_notebook_node(nb)
     module = types.ModuleType("modelos_neurais_nb")
     exec(code, module.__dict__)
