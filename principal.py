@@ -3,6 +3,7 @@
 import zipfile
 import subprocess
 from pathlib import Path
+from typing import List, Dict, Mapping
 
 # %%
 import pandas as pd
@@ -11,8 +12,13 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import (
+    classification_report,
+    accuracy_score,
+    precision_recall_fscore_support,
+)
 from modelos_neurais import (
     treinar_mlp_keras,
     treinar_cnn_texto,
@@ -448,6 +454,73 @@ def executar_tudo():
     df = pd.DataFrame(results_dt)
     df.to_csv("results.csv", index=False)
     return df
+
+
+# %%
+def avaliar_dataset(df: pd.DataFrame, target: str) -> List[Dict[str, float]]:
+    """Train simple models on *df* and return metrics."""
+    X = df.drop(columns=[target])
+    y = df[target]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+
+    models = {
+        "Logistic Regression": LogisticRegression(max_iter=1000),
+        "Decision Tree": DecisionTreeClassifier(random_state=42),
+        "GaussianNB": GaussianNB(),
+    }
+
+    results = []
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        preds = model.predict(X_test)
+        acc = accuracy_score(y_test, preds)
+        precision, recall, f1, _ = precision_recall_fscore_support(
+            y_test, preds, average="weighted", zero_division=0
+        )
+        results.append(
+            {
+                "method": name,
+                "accuracy": acc,
+                "precision": precision,
+                "recall": recall,
+                "f1": f1,
+            }
+        )
+    return results
+
+
+# %%
+def agregar_resultados(csv_path: str) -> Mapping[str, pd.DataFrame]:
+    """Group ``results.csv`` by dataset and method and average metrics."""
+    df = pd.read_csv(csv_path)
+    metrics = ["accuracy", "precision", "recall", "f1", "duration"]
+    grouped = df.groupby(["dataset", "method"])[metrics].mean().reset_index()
+
+    result: Dict[str, pd.DataFrame] = {}
+    for dataset, table in grouped.groupby("dataset"):
+        result[dataset] = table.drop(columns="dataset").reset_index(drop=True)
+    return result
+
+
+# %%
+def gerar_tabelas(csv_path: str, out_dir: str = ".", prefix: str = "table") -> None:
+    """Create per-dataset tables in CSV and Markdown format."""
+    tables = agregar_resultados(csv_path)
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    for dataset, table in tables.items():
+        slug = dataset.lower().replace(" ", "_")
+        table.to_csv(out / f"{prefix}_{slug}.csv", index=False)
+        try:
+            markdown = table.to_markdown(index=False)
+        except ImportError:
+            markdown = table.to_csv(index=False)
+        with open(out / f"{prefix}_{slug}.md", "w", encoding="utf-8") as fh:
+            fh.write(markdown)
 
 
 # %%
