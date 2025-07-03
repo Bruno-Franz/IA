@@ -31,21 +31,10 @@ from sklearn.metrics import (
     accuracy_score,
     precision_recall_fscore_support,
 )
-import types
-import nbformat
-from nbconvert import PythonExporter
+from notebook_loader import load_notebook_as_module
 
 
-def _load_neural_models(nb_path: str = "modelos_neurais.ipynb"):
-    """Load neural network helper functions from the notebook."""
-    nb = nbformat.read(nb_path, as_version=4)
-    code, _ = PythonExporter().from_notebook_node(nb)
-    module = types.ModuleType("modelos_neurais_nb")
-    exec(code, module.__dict__)
-    return module
-
-
-_modelos = _load_neural_models()
+_modelos = load_notebook_as_module("modelos_neurais.ipynb")
 treinar_mlp_keras = _modelos.treinar_mlp_keras
 treinar_cnn_texto = _modelos.treinar_cnn_texto
 treinar_cnn_lstm_texto = _modelos.treinar_cnn_lstm_texto
