@@ -1,4 +1,5 @@
 # %%
+# Este arquivo faz parte do legado do projeto e não é mais mantido.
 try:
     from google.colab import drive
     drive.mount('/content/drive')

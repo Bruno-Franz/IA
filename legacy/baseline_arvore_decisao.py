@@ -1,4 +1,5 @@
 # %%
+# Este arquivo faz parte do legado do projeto e não é mais mantido.
 from __future__ import annotations
 try:
     from google.colab import drive
