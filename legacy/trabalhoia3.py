@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Este arquivo faz parte do legado do projeto e não é mais mantido.
 # %%
 """TrabalhoIA2.ipynb
 

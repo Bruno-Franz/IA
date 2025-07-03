@@ -68,20 +68,20 @@ https://github.com/larifeliciana/books-reviews-portuguese
 
 Abra o notebook `principal.ipynb` em seu ambiente Jupyter (local ou no Google Colab) e execute todas as células para reproduzir os experimentos completos. Há também notebooks auxiliares, como `baseline_arvore_decisao.ipynb` e `modelos_neurais.ipynb`, que podem ser executados individualmente.
 
-Os arquivos `.py` correspondentes permanecem no repositório apenas como referência histórica.
+Os arquivos `.py` correspondentes foram movidos para a pasta `legacy/` e não são mais mantidos. Eles servem apenas como referência opcional.
 
 Para gerar um CSV consolidado com as métricas do baseline a partir de código Python, utilize o módulo `baseline_arvore_decisao` diretamente:
 
 ```python
 import pandas as pd
-import baseline_arvore_decisao
+import legacy.baseline_arvore_decisao as baseline_arvore_decisao
 
 pd.DataFrame(baseline_arvore_decisao.executar_tudo()).to_csv('resultados_consolidados.csv', index=False)
 ```
 
 ## Gerar `results.csv` e tabelas resumo
 
-Abra o notebook `baseline_arvore_decisao.ipynb` para treinar os modelos de referência e salvar `results.csv`. (O script `baseline_arvore_decisao.py` está disponível apenas como legado.)
+Abra o notebook `baseline_arvore_decisao.ipynb` para treinar os modelos de referência e salvar `results.csv`. (O script `legacy/baseline_arvore_decisao.py` continua no repositório apenas para consulta.)
 
 Em seguida produza tabelas agregadas em Markdown e CSV com `avaliacao.py`:
 
